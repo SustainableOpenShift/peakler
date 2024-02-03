@@ -102,10 +102,30 @@ kubectl get pods --all-namespaces
 kubeadm token create --print-join-command
 
 # after node1 joins below
-kube-master-1:~$ kubectl get nodes -o wide
+@kube-master-1:~$ kubectl get nodes -o wide
 NAME            STATUS   ROLES           AGE   VERSION   INTERNAL-IP   EXTERNAL-IP   OS-IMAGE             KERNEL-VERSION      CONTAINER-RUNTIME
 kube-master-1   Ready    control-plane   47h   v1.28.2   10.10.1.1     <none>        Ubuntu 22.04.2 LTS   5.15.0-86-generic   containerd://1.7.2
 kube-worker-2   Ready    <none>          46h   v1.28.2   10.10.1.2     <none>        Ubuntu 22.04.2 LTS   5.15.0-86-generic   containerd://1.7.2
+
+# make sure everything is up and running
+@kube-master-1:~$ kubectl get pods --all-namespaces
+NAMESPACE          NAME                                       READY   STATUS    RESTARTS   AGE
+calico-apiserver   calico-apiserver-66f746f458-f7px9          1/1     Running   0          46h
+calico-apiserver   calico-apiserver-66f746f458-pd2j2          1/1     Running   0          46h
+calico-system      calico-kube-controllers-84dc8bcc94-fx22p   1/1     Running   0          47h
+calico-system      calico-node-99kzc                          1/1     Running   0          46h
+calico-system      calico-node-kwss5                          1/1     Running   0          47h
+calico-system      calico-typha-8d9f94f9c-2z5jd               1/1     Running   0          47h
+calico-system      csi-node-driver-5djhx                      2/2     Running   0          46h
+calico-system      csi-node-driver-k7snh                      2/2     Running   0          47h
+kube-system        coredns-5dd5756b68-f7s4d                   1/1     Running   0          47h
+kube-system        coredns-5dd5756b68-xj8rf                   1/1     Running   0          47h
+kube-system        etcd-kube-master-1                         1/1     Running   0          47h
+kube-system        kube-apiserver-kube-master-1               1/1     Running   0          47h
+kube-system        kube-controller-manager-kube-master-1      1/1     Running   0          47h
+kube-system        kube-proxy-96ppb                           1/1     Running   0          46h
+kube-system        kube-proxy-r7fkr                           1/1     Running   0          47h
+kube-system        kube-scheduler-kube-master-1               1/1     Running   0          47h
 ```
 
 ### Steps for `node1`
