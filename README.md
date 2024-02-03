@@ -13,7 +13,7 @@ Ubuntu 22.04.2 LTS
 Linux 5.15.0-86-generic
 ```
 
-### Steps
+### Steps for both `node0` and `node1`
 ```
 sudo apt-get update
 
@@ -22,14 +22,16 @@ sudo swapoff -a
 sudo sed -i '/ swap / s/^/#/' /etc/fstab
 lsblk
 
-# set hostnames on node0 and node1
+# Run these separately
+# set hostname on node0 
 sudo hostnamectl set-hostname "kube-master-1"
-sudo hostnamectl set-hostname "kube-master-1"
+# set hostname on node1
+sudo hostnamectl set-hostname "kube-worker-2"
 
-# update /etc/hosts on both nodes
+# update /etc/hosts
 sudo nano /etc/hosts
 10.10.1.1 kube-master-1  
-10.10.1.2 kube-worker-1
+10.10.1.2 kube-worker-2
 
 # Set up the IPV4 bridge on all nodes
 cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
@@ -56,6 +58,10 @@ curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --de
 echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
 sudo apt-get update
 sudo apt-get install -y kubelet kubeadm kubectl
+sudo apt install -y kubelet=1.28.2-00 kubeadm=1.28.2-00 kubectl=1.28.2-00
+
+# prevents them from being updated, upgraded, etc
+sudo apt-mark hold kubeadm kubelet kubectl
 
 # install docker
 sudo apt install docker.io
@@ -64,4 +70,34 @@ sudo sh -c "containerd config default > /etc/containerd/config.toml"
 sudo sed -i 's/ SystemdCgroup = false/ SystemdCgroup = true/' /etc/containerd/config.toml
 sudo systemctl restart containerd.service
 sudo systemctl enable kubelet.service
+sudo systemctl restart kubelet.service
+sudo systemctl enable kubelet.service
+
+# initialize kubernetes services
+sudo kubeadm config images pull
+```
+
+### Steps for `node0`
+```
+# initializes cluster on kube-master-1
+sudo kubeadm init --pod-network-cidr=10.10.0.0/16
+
+# assuming init runs correctly
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+# use Calico for node communication
+kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/tigera-operator.yaml
+curl https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/custom-resources.yaml -O
+
+# this is to replace the 192.168.0.0/16 in custom-resources.yaml to our --pod-network-cidr=10.10.0.0/16
+sed -i 's/cidr: 192\.168\.0\.0\/16/cidr: 10.10.0.0\/16/g' custom-resources.yaml
+kubectl create -f custom-resources.yaml
+
+# make sure everything is up and running
+kubectl get pods --all-namespaces
+
+# creates a new join command for `node1` to join the cluster
+kubeadm token create --print-join-command
 ```
