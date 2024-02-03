@@ -139,7 +139,6 @@ sudo kubeadm join 128.110.96.109:6443 --token XXXXXX --discovery-token-ca-cert-h
 ```
 
 # Kepler Setup Instructions
-Following instructions at: https://sustainable-computing.io/installation/kepler/
 
 ## Deploy Promethesus
 https://sustainable-computing.io/installation/kepler/#deploy-the-prometheus-operator
@@ -149,4 +148,53 @@ cd kube-prometheus
 kubectl apply --server-side -f manifests/setup
 until kubectl get servicemonitors --all-namespaces ; do date; sleep 1; echo ""; done
 kubectl apply -f manifests/
+```
+
+## Deploy Kepler
+https://sustainable-computing.io/installation/kepler
+```
+git clone --depth 1 git@github.com:sustainable-computing-io/kepler.git
+cd kepler
+
+# baremetal deploy with prometheus
+make build-manifest OPTS="BM_DEPLOY PROMETHEUS_DEPLOY"
+
+kubectl apply -f _output/generated-manifest/deployment.yaml
+```
+
+## Check deployment
+```
+@kube-master-1:~$ kubectl get pods --all-namespaces
+NAMESPACE          NAME                                       READY   STATUS    RESTARTS   AGE
+calico-apiserver   calico-apiserver-66f746f458-f7px9          1/1     Running   0          47h
+calico-apiserver   calico-apiserver-66f746f458-pd2j2          1/1     Running   0          47h
+calico-system      calico-kube-controllers-84dc8bcc94-fx22p   1/1     Running   0          47h
+calico-system      calico-node-99kzc                          1/1     Running   0          47h
+calico-system      calico-node-kwss5                          1/1     Running   0          47h
+calico-system      calico-typha-8d9f94f9c-2z5jd               1/1     Running   0          47h
+calico-system      csi-node-driver-5djhx                      2/2     Running   0          47h
+calico-system      csi-node-driver-k7snh                      2/2     Running   0          47h
+kepler             kepler-exporter-92tnl                      1/1     Running   0          47h
+kube-system        coredns-5dd5756b68-f7s4d                   1/1     Running   0          47h
+kube-system        coredns-5dd5756b68-xj8rf                   1/1     Running   0          47h
+kube-system        etcd-kube-master-1                         1/1     Running   0          47h
+kube-system        kube-apiserver-kube-master-1               1/1     Running   0          47h
+kube-system        kube-controller-manager-kube-master-1      1/1     Running   0          47h
+kube-system        kube-proxy-96ppb                           1/1     Running   0          47h
+kube-system        kube-proxy-r7fkr                           1/1     Running   0          47h
+kube-system        kube-scheduler-kube-master-1               1/1     Running   0          47h
+monitoring         alertmanager-main-0                        2/2     Running   0          47h
+monitoring         alertmanager-main-1                        2/2     Running   0          47h
+monitoring         alertmanager-main-2                        2/2     Running   0          47h
+monitoring         blackbox-exporter-76b5c44577-rcxp9         3/3     Running   0          47h
+monitoring         grafana-684ffd8b85-fll9k                   1/1     Running   0          47h
+monitoring         kube-state-metrics-cff77f89d-w5dms         3/3     Running   0          47h
+monitoring         node-exporter-59lvv                        2/2     Running   0          47h
+monitoring         node-exporter-tdtc6                        2/2     Running   0          47h
+monitoring         prometheus-adapter-74894c5547-6l26r        1/1     Running   0          47h
+monitoring         prometheus-adapter-74894c5547-7wv2f        1/1     Running   0          47h
+monitoring         prometheus-k8s-0                           2/2     Running   0          47h
+monitoring         prometheus-k8s-1                           2/2     Running   0          47h
+monitoring         prometheus-operator-5f58f7c596-wkr2k       2/2     Running   0          47h
+tigera-operator    tigera-operator-94d7f7696-99j5n            1/1     Running   0          47h
 ```
