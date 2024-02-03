@@ -98,6 +98,15 @@ kubectl create -f custom-resources.yaml
 # make sure everything is up and running
 kubectl get pods --all-namespaces
 
-# creates a new join command for `node1` to join the cluster
+# creates a new join command for node1 to join the cluster
 kubeadm token create --print-join-command
+```
+
+### Steps for `node1`
+```
+# clean up state just incase
+sudo kubeadm reset
+
+# uses previous --print-join-commnd from node0
+sudo kubeadm join 128.110.96.109:6443 --token XXXXXX --discovery-token-ca-cert-hash XXXXX
 ```
