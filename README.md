@@ -100,6 +100,12 @@ kubectl get pods --all-namespaces
 
 # creates a new join command for node1 to join the cluster
 kubeadm token create --print-join-command
+
+# after node1 joins below
+kube-master-1:~$ kubectl get nodes -o wide
+NAME            STATUS   ROLES           AGE   VERSION   INTERNAL-IP   EXTERNAL-IP   OS-IMAGE             KERNEL-VERSION      CONTAINER-RUNTIME
+kube-master-1   Ready    control-plane   47h   v1.28.2   10.10.1.1     <none>        Ubuntu 22.04.2 LTS   5.15.0-86-generic   containerd://1.7.2
+kube-worker-2   Ready    <none>          46h   v1.28.2   10.10.1.2     <none>        Ubuntu 22.04.2 LTS   5.15.0-86-generic   containerd://1.7.2
 ```
 
 ### Steps for `node1`
