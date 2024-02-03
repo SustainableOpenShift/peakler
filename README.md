@@ -198,3 +198,23 @@ monitoring         prometheus-k8s-1                           2/2     Running   
 monitoring         prometheus-operator-5f58f7c596-wkr2k       2/2     Running   0          47h
 tigera-operator    tigera-operator-94d7f7696-99j5n            1/1     Running   0          47h
 ```
+
+# View Kepler Metrics
+```
+kubectl get svc
+kubectl config set-context --current --namespace=kepler
+kubectl port-forward svc/kepler-exporter 9102:9102
+
+# inside another terminal on node0
+curl -s localhost:9102/metrics | grep -E 'kepler_container|kepler_node'
+```
+
+### MISC kube commands
+```
+kubectl get pods
+kubectl get svc
+kubectl describe pod coredn -n kube-system
+journalctl -x -u kubelet.service -f
+kubectl get nodes
+
+```
