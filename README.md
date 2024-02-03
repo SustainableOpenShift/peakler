@@ -1,6 +1,6 @@
-# peakler
+# peakler Project
 
-## Kubernetes Setup Instructions
+# Kubernetes Setup Instructions
 Following instructions at: https://www.cherryservers.com/blog/install-kubernetes-on-ubuntu
 
 This assumes two nodes: `node0` and `node1` that are interconnected via a LAN/VLAN with ip addresses `10.10.1.1` and `10.10.1.2`
@@ -136,4 +136,17 @@ sudo kubeadm reset
 
 # uses previous --print-join-commnd from node0
 sudo kubeadm join 128.110.96.109:6443 --token XXXXXX --discovery-token-ca-cert-hash XXXXX
+```
+
+# Kepler Setup Instructions
+Following instructions at: https://sustainable-computing.io/installation/kepler/
+
+## Deploy Promethesus
+https://sustainable-computing.io/installation/kepler/#deploy-the-prometheus-operator
+```
+git clone --depth 1 https://github.com/prometheus-operator/kube-prometheus
+cd kube-prometheus
+kubectl apply --server-side -f manifests/setup
+until kubectl get servicemonitors --all-namespaces ; do date; sleep 1; echo ""; done
+kubectl apply -f manifests/
 ```
