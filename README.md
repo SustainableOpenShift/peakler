@@ -126,6 +126,7 @@ kube-system        kube-controller-manager-kube-master-1      1/1     Running   
 kube-system        kube-proxy-96ppb                           1/1     Running   0          46h
 kube-system        kube-proxy-r7fkr                           1/1     Running   0          47h
 kube-system        kube-scheduler-kube-master-1               1/1     Running   0          47h
+tigera-operator    tigera-operator-94d7f7696-99j5n            1/1     Running   0          47h
 ```
 
 ### Steps for `node1`
