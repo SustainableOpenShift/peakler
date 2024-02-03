@@ -1,6 +1,8 @@
 # peakler Project
 
 # Kubernetes Setup Instructions
+> For fedora, follow this instead: https://docs.fedoraproject.org/en-US/quick-docs/using-kubernetes/
+
 Following instructions at: https://www.cherryservers.com/blog/install-kubernetes-on-ubuntu
 
 This assumes two nodes: `node0` and `node1` that are interconnected via a LAN/VLAN with ip addresses `10.10.1.1` and `10.10.1.2`
