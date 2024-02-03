@@ -209,12 +209,12 @@ kubectl port-forward svc/kepler-exporter 9102:9102
 curl -s localhost:9102/metrics | grep -E 'kepler_container|kepler_node'
 ```
 
-### MISC kube commands
+### helpful kube commands
 ```
 kubectl get pods
 kubectl get svc
 kubectl describe pod coredn -n kube-system
 journalctl -x -u kubelet.service -f
 kubectl get nodes
-
+kubectl top node
 ```
