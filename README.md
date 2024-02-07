@@ -219,4 +219,5 @@ kubectl describe pod coredn -n kube-system
 journalctl -x -u kubelet.service -f
 kubectl get nodes
 kubectl top node
+kubectl explain Deployment
 ```
