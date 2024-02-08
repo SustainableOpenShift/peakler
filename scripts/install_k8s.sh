@@ -52,3 +52,6 @@ sudo systemctl enable kubelet.service
 
 # initialize kubernetes services
 sudo kubeadm config images pull
+
+# install golang for kepler
+sudo apt-get install -y golang
