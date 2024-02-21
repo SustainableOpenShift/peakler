@@ -14,8 +14,8 @@ echo "🟢 setup calico 🟢"
 kubectl create -f calico/tigera-operator.yaml
 kubectl create -f calico/custom-resources.yaml
 
-echo "🟢 wait 30 seconds 🟢"
-sleep 30
+echo "🟢 wait 120 seconds 🟢"
+sleep 120
 kubectl get pods --all-namespaces
 
 echo "⚠️  ⚠️  Make sure a node join the cluster with the command below before continuing ⚠️  ⚠️ "

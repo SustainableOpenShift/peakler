@@ -2,7 +2,7 @@
 
 #set -x
 
-tar -xf prometheus.tar.gz
+tar -xf kube-prometheus-0.13.0.tar.gz
 
 echo "🟢 apply prometheus manifests 🟢"
 kubectl apply --server-side -f kube-prometheus-0.13.0/manifests/setup
@@ -13,6 +13,6 @@ sleep 1
 
 kubectl apply -f kube-prometheus-0.13.0/manifests/
 
-echo "🟢 wait 30 secs, hopefully all ready 🟢"
-sleep 30
+echo "🟢 wait 60 secs 🟢"
+sleep 60
 kubectl get pods --all-namespaces
