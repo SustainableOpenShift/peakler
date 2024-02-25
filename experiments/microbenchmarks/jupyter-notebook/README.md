@@ -79,4 +79,7 @@ hand32@Mapper10-3:~/peakler/experiments/microbenchmarks$ perf stat -a -e instruc
 
 ```
 ## Assuming 10,000,000 instructions, then there is around 25,415,217 - 10,000,000 = 15,215,034 non work ALU instructions
-## 
+
+654960277152-15215034 = 654945062118
+654945062118/10000000 = 65494
+65494 = ~65000 iterations
