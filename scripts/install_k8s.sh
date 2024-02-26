@@ -45,6 +45,11 @@ sudo apt install docker.io
 sudo mkdir /etc/containerd
 sudo sh -c "containerd config default > /etc/containerd/config.toml"
 sudo sed -i 's/ SystemdCgroup = false/ SystemdCgroup = true/' /etc/containerd/config.toml
+
+# may need to disable apparmor
+sudo systemctl stop apparmor
+sudo systemctl disable apparmor 
+
 sudo systemctl restart containerd.service
 sudo systemctl enable kubelet.service
 sudo systemctl restart kubelet.service
