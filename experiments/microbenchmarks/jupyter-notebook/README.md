@@ -47,20 +47,49 @@ hand32@Mapper10-3:~/peakler/experiments/microbenchmarks$ perf stat -a -e instruc
 
        0.039708530 seconds time elapsed
 
-hand32@Mapper10-3:~/peakler/experiments/microbenchmarks$ perf stat -a -e instructions,cycles,cache-references,cache-misses,ref-cycles,power/energy-cores/,power/energy-pkg/,power/energy-ram/ taskset -c 15 ./build/runALU 6500
+hand32@node1:~/peakler/experiments/microbenchmarks$ perf stat -a -e instructions,cycles,cache-references,cache-misses,ref-cycles,power/energy-cores/,power/energy-pkg/,power/energy-ram/ taskset -c 15 ./build/runALU 6500
 
  Performance counter stats for 'system wide':
 
-    65,387,646,182        instructions              #    0.43  insn per cycle         
-   153,475,542,779        cycles                                                      
-       986,226,116        cache-references                                            
-       142,910,907        cache-misses              #   14.491 % of all cache refs    
-   154,371,409,322        ref-cycles                                                  
-          1,404.72 Joules power/energy-cores/                                         
-          2,884.02 Joules power/energy-pkg/                                           
-            703.80 Joules power/energy-ram/                                           
+    69,759,925,617        instructions              #    0.49  insn per cycle
+   143,169,493,158        cycles
+     1,026,550,403        cache-references
+       173,842,003        cache-misses              #   16.935 % of all cache refs
+   146,725,968,766        ref-cycles
+          1,473.81 Joules power/energy-cores/
+          2,764.52 Joules power/energy-pkg/
+            864.79 Joules power/energy-ram/
 
-      58.678943883 seconds time elapsed
+      50.858755816 seconds time elapsed
+hand32@node1:~/peakler/experiments/microbenchmarks$ perf stat -a -e instructions,cycles,cache-references,cache-misses,ref-cycles,power/energy-cores/,power/energy-pkg/,power/energy-ram/ taskset -c 15 ./build/runALU 6500
+
+ Performance counter stats for 'system wide':
+
+    70,076,686,652        instructions              #    0.49  insn per cycle
+   143,855,358,880        cycles
+     1,030,117,575        cache-references
+       177,073,847        cache-misses              #   17.190 % of all cache refs
+   146,868,248,462        ref-cycles
+          1,478.08 Joules power/energy-cores/
+          2,769.28 Joules power/energy-pkg/
+            865.54 Joules power/energy-ram/
+
+      50.856169383 seconds time elapsed
+
+hand32@node1:~/peakler/experiments/microbenchmarks$ perf stat -a -e instructions,cycles,cache-references,cache-misses,ref-cycles,power/energy-cores/,power/energy-pkg/,power/energy-ram/ taskset -c 15 ./build/runALU 6500
+
+ Performance counter stats for 'system wide':
+
+    71,151,449,075        instructions              #    0.48  insn per cycle
+   146,764,211,721        cycles
+     1,066,610,641        cache-references
+       185,152,167        cache-misses              #   17.359 % of all cache refs
+   150,685,985,840        ref-cycles
+          1,493.33 Joules power/energy-cores/
+          2,790.72 Joules power/energy-pkg/
+            871.40 Joules power/energy-ram/
+
+      51.280278445 seconds time elapsed
 
 hand32@Mapper10-3:~/peakler/experiments/microbenchmarks$ perf stat -a -e instructions,cycles,cache-references,cache-misses,ref-cycles,power/energy-cores/,power/energy-pkg/,power/energy-ram/ taskset -c 15 ./build/runALU 65000
 
