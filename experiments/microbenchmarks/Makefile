@@ -1,16 +1,25 @@
 CC = gcc
+CXX = g++
 AS = as
 LD = ld
 
+CXX_FLAGS = -c -Wa,-adhln -g
 ASFLAGS = -c
 LDFLAGS =
 
 SRC_DIR = src
 BUILD_DIR = build
 
-.PHONY: all clean $(BUILD_DIR)/runALU $(BUILD_DIR)/runMEMC
+.PHONY: all clean $(BUILD_DIR)/runALU $(BUILD_DIR)/runMEMC $(BUILD_DIR)/runALUpcm
 
 all: $(BUILD_DIR)/runALU $(BUILD_DIR)/runMEMC
+
+$(BUILD_DIR)/runALUpcm: $(BUILD_DIR)/mainALUpcm.o $(BUILD_DIR)/workALU.o
+	$(CXX) -L./intel-pcm-lite/build -o $@ $^ -lintelpcmlite
+
+##g++ -I./intel-pcm-lite/include -L./intel-pcm-lite/build -o build/mainALUpcm.o src/mainALUpcm.cpp -lintelpcmlite
+$(BUILD_DIR)/mainALUpcm.o: $(SRC_DIR)/mainALUpcm.cpp
+	$(CXX) -c -o $@ $< -I./intel-pcm-lite/include
 
 $(BUILD_DIR)/runALU: $(BUILD_DIR)/mainALU.o $(BUILD_DIR)/workALU.o
 	$(CC) -g $(LDFLAGS) $^ -o $@
