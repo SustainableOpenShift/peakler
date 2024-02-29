@@ -16,6 +16,7 @@ all: $(BUILD_DIR)/runALU $(BUILD_DIR)/runMEMC
 
 $(BUILD_DIR)/runALUpcm: $(BUILD_DIR)/mainALUpcm.o $(BUILD_DIR)/workALU.o
 	$(CXX) -L./intel-pcm-lite/build -o $@ $^ -lintelpcmlite
+	sudo setcap cap_sys_rawio=ep $(BUILD_DIR)/runALUpcm
 
 ##g++ -I./intel-pcm-lite/include -L./intel-pcm-lite/build -o build/mainALUpcm.o src/mainALUpcm.cpp -lintelpcmlite
 $(BUILD_DIR)/mainALUpcm.o: $(SRC_DIR)/mainALUpcm.cpp
