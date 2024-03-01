@@ -10,12 +10,13 @@
 #define UINT32_MAXT 0xffffffff
 
 /* Derived from:
-sudo journalctl -k --grep '^tsc:'  | cut -d' ' -f5-
+[peaks@kube-worker-68 microbenchmarks]$ sudo journalctl -k --grep '^tsc:'  | cut -d' ' -f5-
+[sudo] password for peaks:
 kernel: tsc: Fast TSC calibration using PIT
-kernel: tsc: Detected 2599.777 MHz processor
-kernel: tsc: Refined TSC clocksource calibration: 2600.000 MHz
+kernel: tsc: Detected 2199.880 MHz processor
+kernel: tsc: Refined TSC clocksource calibration: 2199.998 MHz
 */
-#define TIME_CONVERSION_khz 2600000*1000
+#define TIME_CONVERSION_khz 2200000*1000
 
 extern "C" int alu(unsigned long long, unsigned long long, unsigned long long);
 
@@ -52,7 +53,8 @@ int main(int argc, char *argv[]) {
     unhalted_ref_cyc_tsc.Stop();
     llc_miss.Stop();
     
-    float nrg = rp.Read();
+    float cpunrg = rp.ReadPkg();
+    float dramnrg = rp.ReadDram();
     uint64_t ins = ins_retired.Read();
     uint64_t ref_cyc = unhalted_ref_cyc_tsc.Read();
     uint64_t llcm = llc_miss.Read();
@@ -62,7 +64,7 @@ int main(int argc, char *argv[]) {
     float tdiff = (tsc_diff/(float)TIME_CONVERSION_khz)/1000000.0;
     
     rp.Clear();
-    printf("%.3lf J,%.3lf, ins=%lu, ref_cyc=%lu, llcm=%lu\n", nrg, tdiff, ins, ref_cyc, llcm);
+    printf("CPU: %.3lf J, DRAM: %.3lf J, TSC: %.3lf, INS: %lu, REF_CYC: %lu, LLC: %lu\n", cpunrg, dramnrg, tdiff, ins, ref_cyc, llcm);
     
     return 0;
 }
