@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: microbench-configmap-perf
+data:
+  microbench.sh: |
+    #!/bin/bash
+    set -x
+
+    dnf -y update
+    dnf -y groupinstall "Development Tools"
+    dnf install perf -y
+    
+    echo "🟢🟢 Checking GCC/G++  🟢🟢"
+    gcc --version
+    g++ --version
+
+    echo "🟢🟢 Building microbenchmarks  🟢🟢"
+    
+    git clone https://github.com/handong32/peakler.git    
+    #cd peakler/experiments/microbenchmarks && git clone https://github.com/handong32/intel-pcm-lite.git && cd intel-pcm-lite && make build/libintelpcmlite.a && cd ../
+    cd peakler/experiments/microbenchmarks
+    COUNT=5000000 make build/runALU
+
+    nproc
+    
+    echo "🟢🟢 runALU 1  🟢🟢"
+    for ((i=0;i<10;i++)); do perf stat -e instructions,cache-misses,ref-cycles -x, taskset -c 87 ./build/runALU 1 && echo ""; done
+    sleep 5
+
+    echo "🟢🟢 runALU 2  🟢🟢"
+    for ((i=0;i<10;i++)); do perf stat -e instructions,cache-misses,ref-cycles -x, taskset -c 87 ./build/runALU 2 && echo ""; done
+    sleep 5
+
+    echo "🟢🟢 runALU 3  🟢🟢"
+    for ((i=0;i<10;i++)); do perf stat -e instructions,cache-misses,ref-cycles -x, taskset -c 87 ./build/runALU 3 && echo ""; done
+    sleep 5
+
+    echo "🟢🟢 runALU 9000  🟢🟢"
+    for ((i=0;i<10;i++)); do perf stat -e instructions,cache-misses,ref-cycles -x, taskset -c 87 ./build/runALU 9000 && echo ""; done
+    sleep 5
+
+    echo "🟢🟢 runALU 9000 PKG and RAM POWER 🟢🟢"
+    for ((i=0;i<10;i++)); do perf stat -e power/energy-pkg/,power/energy-ram/ -x, taskset -c 87 ./build/runALU 9000 && echo ""; done
+    sleep 5
+
+    echo "🟢🟢 runALU 27000  🟢🟢"
+    for ((i=0;i<3;i++)); do perf stat -e instructions,cache-misses,ref-cycles -x, taskset -c 87 ./build/runALU 27000 && echo ""; done
+    sleep 5
+
+    echo "🟢🟢 runALU 27000 PKG and RAM POWER 🟢🟢"
+    for ((i=0;i<3;i++)); do perf stat -e power/energy-pkg/,power/energy-ram/ -x, taskset -c 87 ./build/runALU 27000 && echo ""; done
+    sleep 5
+
+    
+

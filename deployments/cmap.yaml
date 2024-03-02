@@ -7,23 +7,38 @@ data:
     #!/bin/bash
     set -x
 
-    #yum -y update
-    #yum -y install gcc git
-    #yum -y groupinstall "Development Tools"
-    #yum -y install gcc git make
-    apt-get update
-    apt-get install -y build-essential git
+    dnf -y update
+    dnf -y groupinstall "Development Tools"
+    
+    echo "🟢🟢 Checking GCC/G++  🟢🟢"
     gcc --version
-    git clone https://github.com/handong32/peakler.git
+    g++ --version
+
+    echo "🟢🟢 Building microbenchmarks  🟢🟢"
+    
+    git clone https://github.com/handong32/peakler.git    
     cd peakler/experiments/microbenchmarks
     COUNT=5000000 make build/runALU
+
     nproc
-    sleep 60
-    echo "3"
-    sleep 1
-    echo "2"
-    sleep 1
-    echo "1"
-    sleep 1
-    taskset -c 1 ./build/runALU 65000
-    sleep 60
+
+    for (( i=1; i<=3; i++ )); do
+        echo "🟢🟢 ITER ${i}: runALU 27000  🟢🟢"
+        for (( s=10; s>0; s-- )); do
+            echo "🟢 WAIT ${s} 🟢"
+            sleep 1
+        done
+        taskset -c 87 ./build/runALU 27000
+        for (( s=10; s>0; s-- )); do
+            echo "🟢 WAIT${s} 🟢"
+            sleep 1
+        done
+    done
+    
+    #echo "🟢🟢 runALU 27000  🟢🟢"
+    #sleep 60
+    #taskset -c 87 ./build/runALU 27000
+    #sleep 60
+
+    
+

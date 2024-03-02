@@ -10,13 +10,15 @@ data:
     apt-get update
     apt-get install -y build-essential git
     apt-get install -y linux-tools-common linux-tools-`uname -r`
-    
-    git clone https://github.com/handong32/peakler.git
-    cd peakler/experiments/microbenchmarks
-    COUNT=5000000 make build/runALU	
-    nproc
-    perf stat -a -e instructions,cycles,cache-references,cache-misses,ref-cycles,power/energy-cores/,power/energy-pkg/,power/energy-ram/ taskset -c 15 ./build/runALU 6500
-    sleep 10
-    perf stat -a -e instructions,cycles,cache-references,cache-misses,ref-cycles,power/energy-cores/,power/energy-pkg/,power/energy-ram/ taskset -c 15 ./build/runALU 6500
-    sleep 10
-    perf stat -a -e instructions,cycles,cache-references,cache-misses,ref-cycles,power/energy-cores/,power/energy-pkg/,power/energy-ram/ taskset -c 15 ./build/runALU 6500
+
+    gcc --version
+    sleep 60
+    #git clone https://github.com/handong32/peakler.git
+    #cd peakler/experiments/microbenchmarks
+    #COUNT=5000000 make build/runALU	
+    #nproc
+    #perf stat -a -e instructions,cycles,cache-references,cache-misses,ref-cycles,power/energy-cores/,power/energy-pkg/,power/energy-ram/ taskset -c 15 ./build/runALU 6500
+    #sleep 10
+    #perf stat -a -e instructions,cycles,cache-references,cache-misses,ref-cycles,power/energy-cores/,power/energy-pkg/,power/energy-ram/ taskset -c 15 ./build/runALU 6500
+    #sleep 10
+    #perf stat -a -e instructions,cycles,cache-references,cache-misses,ref-cycles,power/energy-cores/,power/energy-pkg/,power/energy-ram/ taskset -c 15 ./build/runALU 6500

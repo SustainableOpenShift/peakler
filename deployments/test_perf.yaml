@@ -1,12 +1,12 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: microbench
+  name: microbench-perf
 spec:
   template:
     spec:
       containers:
-        - name: microb
+        - name: microb-perf
           image: quay.io/centos/centos:stream8
           command: ["/script/microbench.sh"]
           volumeMounts:
@@ -15,6 +15,6 @@ spec:
       volumes:
         - name: script
           configMap:
-            name: microbench-configmap
+            name: microbench-configmap-perf
             defaultMode: 0500
       restartPolicy: Never

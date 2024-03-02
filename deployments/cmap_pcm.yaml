@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: microbench-configmap-pcm
+data:
+  microbench.sh: |
+    #!/bin/bash
+    set -x
+
+    dnf -y update
+    dnf -y groupinstall "Development Tools"
+
+    echo "🟢🟢 Checking GCC/G++  🟢🟢"
+    gcc --version
+    g++ --version
+
+    echo "🟢🟢 Building microbenchmarks  🟢🟢"
+    
+    git clone https://github.com/handong32/peakler.git
+    
+    cd peakler/experiments/microbenchmarks && git clone https://github.com/handong32/intel-pcm-lite.git && cd intel-pcm-lite && make build/libintelpcmlite.a && cd ../
+    
+    COUNT=5000000 make build/runALUpcm
+
+    groupadd msr
+    chgrp msr /dev/cpu/*/msr
+    ls -l /dev/cpu/*/msr
+    chmod g+rw /dev/cpu/*/msr
+    usermod -aG msr $(whoami)
+    echo "⚠️ ⚠️ ⚠️  NOTE: Please exit completely and re-login to this node for msr group changes to take effect ⚠️ ⚠️ ⚠️"
+
+    newgrp - msr
+    setcap cap_sys_rawio=ep build/runALUpcm
+    
+    echo "🟢🟢 Running  🟢🟢"
+    ./build/runALUpcm 1
+    
+    #perf list
+    #dnf install perf -y    
