@@ -122,6 +122,20 @@
 2438688,,cache-misses,62173185382,100.00,,
 135876660458,,ref-cycles,62173185382,100.00,,
 
+## Running after kepler is already started, for some reason can't get ref-cycles??
+[peaks@kube-worker-68 microbenchmarks]$ for ((i=0;i<10;i++)); do perf stat -e instructions,cache-misses,ref-cycles -x, taskset -c 87 ./build/runALU 9000 && echo ""; done
+90512796186,,instructions,20900929483,33.00,,
+5109052,,cache-misses,41879256951,66.00,,
+<not counted>,,ref-cycles,0,0.00,,
+
+90682892302,,instructions,20785164776,33.00,,
+5963795,,cache-misses,41594512455,66.00,,
+<not counted>,,ref-cycles,0,0.00,,
+
+90774753179,,instructions,20806257036,33.00,,
+5415817,,cache-misses,41817225928,66.00,,
+<not counted>,,ref-cycles,0,0.00,,
+
 [peaks@kube-worker-68 microbenchmarks]$ for ((i=0;i<10;i++)); do perf stat -e power/energy-pkg/,power/energy-ram/ -x, taskset -c 87 ./build/runALU 9000 && echo ""; done
 6553.08,Joules,power/energy-pkg/,249397611610,100.00,,
 4914.94,Joules,power/energy-ram/,249397605610,100.00,,
