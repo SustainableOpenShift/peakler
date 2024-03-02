@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: microbench-perf
+spec:
+  template:
+    spec:
+      containers:
+        - name: microb-perf
+          image: ubuntu
+          command: ["/script/microbench.sh"]
+          volumeMounts:
+            - name: script
+              mountPath: "/script"
+      volumes:
+        - name: script
+          configMap:
+            name: microbench-configmap-perf
+            defaultMode: 0500
+      restartPolicy: Never
