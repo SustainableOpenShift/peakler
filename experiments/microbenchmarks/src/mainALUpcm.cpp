@@ -5,7 +5,7 @@
 #include <cmath>
 
 #include <Perf.h>
-#include <Rapl.h>
+//#include <Rapl.h>
 
 #define UINT32_MAXT 0xffffffff
 
@@ -37,8 +37,8 @@ int main(int argc, char *argv[]) {
     ins_retired.Start();
     unhalted_ref_cyc_tsc.Start();
     llc_miss.Start();
-    rapl::RaplCounter rp = rapl::RaplCounter();
-    rp.Start();
+    //rapl::RaplCounter rp = rapl::RaplCounter();
+    //rp.Start();
     
     uint64_t tsc_start = rdtsc();
     
@@ -48,13 +48,13 @@ int main(int argc, char *argv[]) {
       alu(42, 3, 0);
     }
 
-    rp.Stop();        
+    //rp.Stop();        
     ins_retired.Stop();
     unhalted_ref_cyc_tsc.Stop();
     llc_miss.Stop();
     
-    float cpunrg = rp.ReadPkg();
-    float dramnrg = rp.ReadDram();
+    //float cpunrg = rp.ReadPkg();
+    //float dramnrg = rp.ReadDram();
     uint64_t ins = ins_retired.Read();
     uint64_t ref_cyc = unhalted_ref_cyc_tsc.Read();
     uint64_t llcm = llc_miss.Read();
@@ -63,8 +63,9 @@ int main(int argc, char *argv[]) {
     uint64_t tsc_diff = tsc_stop - tsc_start;
     float tdiff = (tsc_diff/(float)TIME_CONVERSION_khz)/1000000.0;
     
-    rp.Clear();
-    printf("CPU: %.3lf J, DRAM: %.3lf J, TSC: %.3lf, INS: %lu, REF_CYC: %lu, LLC: %lu\n", cpunrg, dramnrg, tdiff, ins, ref_cyc, llcm);
+    //rp.Clear();
+    //printf("CPU: %.3lf J, DRAM: %.3lf J, TSC: %.3lf, INS: %lu, REF_CYC: %lu, LLC: %lu\n", cpunrg, dramnrg, tdiff, ins, ref_cyc, llcm);
+    printf("TSC: %.3lf, INS: %lu, REF_CYC: %lu, LLC: %lu\n", tdiff, ins, ref_cyc, llcm);
     
     return 0;
 }
