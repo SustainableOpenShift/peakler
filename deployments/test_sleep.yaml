@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: microbench-sleep
+spec:
+  template:
+    spec:
+      containers:
+        - name: microb-sleep
+          image: quay.io/centos/centos:stream8
+          command: ["/script/microbench.sh"]
+          volumeMounts:
+            - name: script
+              mountPath: "/script"
+      volumes:
+        - name: script
+          configMap:
+            name: microbench-configmap-sleep
+            defaultMode: 0500
+      restartPolicy: Never
