@@ -1,0 +1,24 @@
+[peaks@kube-worker-68 ~]$ for ((i=0;i<3;i++)); do perf stat -a -e power/energy-pkg/,power/energy-ram/ sleep 60; done
+
+ Performance counter stats for 'system wide':
+
+          3,352.31 Joules power/energy-pkg/
+          4,048.05 Joules power/energy-ram/
+
+      60.002888474 seconds time elapsed
+
+
+ Performance counter stats for 'system wide':
+
+          3,360.27 Joules power/energy-pkg/
+          4,004.53 Joules power/energy-ram/
+
+      60.002917793 seconds time elapsed
+
+
+ Performance counter stats for 'system wide':
+
+          3,293.66 Joules power/energy-pkg/
+          3,925.51 Joules power/energy-ram/
+
+      60.002906953 seconds time elapsed
