@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: microbench-configmap-test
+data:
+  microbench.sh: |
+    #!/bin/bash
+    set -x
+    sleep 3600
+#    curl -s localhost:9102/metrics
+
+    
+
