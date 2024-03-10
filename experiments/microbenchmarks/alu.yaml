@@ -28,7 +28,7 @@ spec:
               nproc;
               ls;
               chmod +x *.sh;
-#              bash ./run_alu.sh -n $NROUNDS -i $NITERS -e $ENDPOINT || exit 1;
+              bash ./run_alu.sh -n $NROUNDS -i $NITERS -e $ENDPOINT || exit 1;
               echo "🟢🟢 Done. Sleeping for 30 days 🟢🟢";
               sleep 30d
           env:

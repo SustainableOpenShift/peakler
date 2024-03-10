@@ -74,19 +74,19 @@ mainParallel () {
 
     mkdir -p results
 
-    #for (( p=1; p<=$(nproc); p++ )); do
-    for (( p=1; p<=$(($(nproc)-86)); p++ )); do
+    NPARALLEL=$(($(nproc)-84))
+    for (( p=1; p<=$NPARALLEL; p++ )); do
 	for (( i=0; i<$NROUNDS; i++ )); do
 	    echo "Round ${i}"
-	    #curl "${ENDPOINT}/metrics" > "results/runALU.ITER${NITERS}.PARALLEL${p}.ROUND${i}.START"
-	    #sleep 1
-	    #for (( j=1; j<=$p; j++ )); do
-#		taskset -c $(($(nproc)-$j)) ./build/runALU ${NITERS} &
-#	    done
-#	    wait
-#	    sleep 1
-#	    curl "${ENDPOINT}/metrics" > "results/runALU.ITER${NITERS}.PARALLEL${p}.ROUND${i}.END"
-#	    sleep 5
+	    curl "${ENDPOINT}/metrics" > "results/runALU.ITER${NITERS}.PARALLEL${p}.ROUND${i}.START"
+	    sleep 1
+	    for (( j=1; j<=$p; j++ )); do
+		taskset -c $(($(nproc)-$j)) ./build/runALU ${NITERS} &
+	    done
+	    wait
+	    sleep 1
+	    curl "${ENDPOINT}/metrics" > "results/runALU.ITER${NITERS}.PARALLEL${p}.ROUND${i}.END"
+	    sleep 5
 	done
     done
 }
