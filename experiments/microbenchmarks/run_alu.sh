@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # Script to run build/runALU benchmark
-
 SCRIPT_NAME=$0
 
 # Defaults
@@ -58,8 +57,11 @@ main () {
     
     for (( i=0; i<$NROUNDS; i++ )); do
 	echo "Round ${i}"
-	curl "${ENDPOINT}/metrics" 
+	curl "${ENDPOINT}/metrics" > "runALU.nr${i}.it${NITERS}.BEGIN"
+	sleep 1
 	./build/runALU ${NITERS}
+	sleep 1
+	curl "${ENDPOINT}/metrics" > "runALU.nr${i}.it${NITERS}.END"
     done
 }
 
