@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -x
+
 # Script to run build/runALU benchmark
 SCRIPT_NAME=$0
 
@@ -84,7 +86,6 @@ mainParallel () {
 	    wait
 	    sleep 1
 	    curl "${ENDPOINT}/metrics" > "results/runALU.ITER${NITERS}.PARALLEL${p}.ROUND${i}.END"
-	    echo "🟢🟢 done runALU.ITER${NITERS}.PARALLEL${p}.ROUND${i}.END 🟢🟢"
 	    sleep 5
 	done
     done
