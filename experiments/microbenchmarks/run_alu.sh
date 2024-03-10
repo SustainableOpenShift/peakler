@@ -54,14 +54,16 @@ processOptions () {
 
 main () {
     processOptions "$@"
+
+    mkdir -p results
     
     for (( i=0; i<$NROUNDS; i++ )); do
 	echo "Round ${i}"
-	curl "${ENDPOINT}/metrics" > "runALU.nr${i}.it${NITERS}.BEGIN"
+	curl "${ENDPOINT}/metrics" > "results/runALU.nr${i}.it${NITERS}.START"
 	sleep 1
 	./build/runALU ${NITERS}
 	sleep 1
-	curl "${ENDPOINT}/metrics" > "runALU.nr${i}.it${NITERS}.END"
+	curl "${ENDPOINT}/metrics" > "results/runALU.nr${i}.it${NITERS}.END"
     done
 }
 
