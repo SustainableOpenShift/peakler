@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -x
+#set -x
 
 # Script to run build/runALU benchmark
 SCRIPT_NAME=$0
@@ -78,7 +78,8 @@ mainParallel () {
     NPARALLEL=$(nproc)
     for (( p=1; p<=$NPARALLEL; p++ )); do
 	for (( i=0; i<$NROUNDS; i++ )); do
-	    echo "Round ${i}"
+	    #echo "Round ${i}"
+	    echo "🟢🟢 runALU.ITER${NITERS}.PARALLEL${p}.ROUND${i}.START  🟢🟢"
 	    curl "${ENDPOINT}/metrics" > "results/runALU.ITER${NITERS}.PARALLEL${p}.ROUND${i}.START"
 	    sleep 1
 	    for (( j=1; j<=$p; j++ )); do
@@ -87,7 +88,8 @@ mainParallel () {
 	    wait
 	    sleep 1
 	    curl "${ENDPOINT}/metrics" > "results/runALU.ITER${NITERS}.PARALLEL${p}.ROUND${i}.END"
-	    echo "🟢🟢 done runALU.ITER${NITERS}.PARALLEL${p}.ROUND${i}.END  🟢🟢"
+	    echo "🟢🟢 runALU.ITER${NITERS}.PARALLEL${p}.ROUND${i}.END  🟢🟢"
+	    echo ""
 	    sleep 5
 	done
     done
