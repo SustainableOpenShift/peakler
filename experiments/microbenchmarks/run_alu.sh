@@ -83,7 +83,7 @@ mainParallel () {
 	    wait;
 	    sleep 1
 	    curl "${ENDPOINT}/metrics" > "results/runALU.ITER${NITERS}.PARALLEL${p}.ROUND${i}.END"
-	    sleep 1
+	    sleep 5
 	done
     done
 }
