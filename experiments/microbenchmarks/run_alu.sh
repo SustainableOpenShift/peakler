@@ -71,14 +71,20 @@ mainParallel () {
     processOptions "$@"
 
     mkdir -p results
-    
-    for (( i=0; i<$NROUNDS; i++ )); do
-	echo "Round ${i}"
-	curl "${ENDPOINT}/metrics" > "results/runALU.ROUND${i}.ITER${NITERS}.PARALLEL${NPARALLEL}.START"
-	sleep 1
-	parallel --jobs ${NPARALLEL} ./build/runALU ::: ${NITERS} 
-	sleep 1
-	curl "${ENDPOINT}/metrics" > "results/runALU.ROUND${i}.ITER${NITERS}.PARALLEL${NPARALLEL}.END"
+
+    for (( p=1; p<=$(nproc); p++ )); do
+	for (( i=0; i<$NROUNDS; i++ )); do
+	    echo "Round ${i}"
+	    curl "${ENDPOINT}/metrics" > "results/runALU.ITER${NITERS}.PARALLEL${p}.ROUND${i}.START"
+	    sleep 1
+	    for (( j=1; j<=$p; j++ )); do
+		taskset -c $(($(nproc)-$j)) ./build/runALU ${NITERS} &
+	    done
+	    wait;
+	    sleep 1
+	    curl "${ENDPOINT}/metrics" > "results/runALU.ITER${NITERS}.PARALLEL${p}.ROUND${i}.END"
+	    sleep 1
+	done
     done
 }
 
