@@ -67,4 +67,20 @@ main () {
     done
 }
 
-main "$@"
+mainParallel () {
+    processOptions "$@"
+
+    mkdir -p results
+    
+    for (( i=0; i<$NROUNDS; i++ )); do
+	echo "Round ${i}"
+	curl "${ENDPOINT}/metrics" > "results/runALU.ROUND${i}.ITER${NITERS}.PARALLEL${NPARALLEL}.START"
+	sleep 1
+	parallel --jobs ${NPARALLEL} ./build/runALU ::: ${NITERS} 
+	sleep 1
+	curl "${ENDPOINT}/metrics" > "results/runALU.ROUND${i}.ITER${NITERS}.PARALLEL${NPARALLEL}.END"
+    done
+}
+
+#main "$@"
+mainParallel "$@"

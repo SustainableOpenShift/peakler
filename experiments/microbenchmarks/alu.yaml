@@ -18,6 +18,7 @@ spec:
             - >
               dnf -y update;
               dnf -y groupinstall "Development Tools";
+	      dnf -y install parallel
               echo "🟢🟢 Checking GCC/G++  🟢🟢";
               gcc --version;
               g++ --version;
@@ -35,3 +36,5 @@ spec:
               value: "1"
             - name: NITERS
               value: "1"
+            - name: NPARALLEL
+              value: "10"
