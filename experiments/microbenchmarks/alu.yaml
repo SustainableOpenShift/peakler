@@ -26,12 +26,14 @@ spec:
               cd peakler/experiments/microbenchmarks;
               COUNT=5000000 make build/runALU;
               nproc;
-              echo "🟢🟢 Done. Sleeping for 30 days 🟢🟢";
-              sleep 30d
+              ./run_ALU.sh -n $NROUNDS -i $NITERS -e $ENDPOINT;
+              sleep 10
+              #echo "🟢🟢 Done. Sleeping for 30 days 🟢🟢";
+              #sleep 30d
           env:
             - name: ENDPOINT
               value: "10.244.200.207:9102"
             - name: NROUNDS
-              value: "1"
+              value: "3"
             - name: NITERS
-              value: "1"
+              value: "9000"
