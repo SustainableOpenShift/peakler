@@ -74,7 +74,8 @@ mainParallel () {
 
     mkdir -p results
 
-    NPARALLEL=$(($(nproc)-84))
+    #NPARALLEL=$(($(nproc)-84))
+    NPARALLEL=$(nproc)
     for (( p=1; p<=$NPARALLEL; p++ )); do
 	for (( i=0; i<$NROUNDS; i++ )); do
 	    echo "Round ${i}"
@@ -86,6 +87,7 @@ mainParallel () {
 	    wait
 	    sleep 1
 	    curl "${ENDPOINT}/metrics" > "results/runALU.ITER${NITERS}.PARALLEL${p}.ROUND${i}.END"
+	    echo "🟢🟢 done runALU.ITER${NITERS}.PARALLEL${p}.ROUND${i}.END  🟢🟢"
 	    sleep 5
 	done
     done
