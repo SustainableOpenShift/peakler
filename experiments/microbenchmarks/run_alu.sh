@@ -80,19 +80,32 @@ mainParallelk8s () {
 
     mkdir -p results
 
-    NPARALLEL=$(($(nproc)-84))
-    #NPARALLEL=$(nproc)
+    #NPARALLEL=$(($(nproc)-84))
+    NPARALLEL=$(nproc)
+    
+    ## Warmup run on all the cores
+    echo "🟢🟢 Warmup run  🟢🟢"
+    for (( p=1; p<=$NPARALLEL; p++ )); do
+	for (( j=1; j<=$p; j++ )); do
+	    taskset -c $(($(nproc)-$j)) ./build/runALU ${NITERS} &
+	done
+	wait
+    done
+
+    # Do actual run
     for (( p=1; p<=$NPARALLEL; p++ )); do
 	for (( i=0; i<$NROUNDS; i++ )); do
-	    #echo "Round ${i}"
 	    echo "🟢🟢 runALU.ITER${NITERS}.PARALLEL${p}.ROUND${i}.START  🟢🟢"
+
+	    sleep 3	    
 	    curl "${ENDPOINT}/metrics" > "results/runALU.ITER${NITERS}.PARALLEL${p}.ROUND${i}.START"
-	    sleep 1
+	    
 	    for (( j=1; j<=$p; j++ )); do
 		taskset -c $(($(nproc)-$j)) ./build/runALU ${NITERS} &
 	    done
 	    wait
-	    sleep 1
+	    sleep 3
+	    
 	    curl "${ENDPOINT}/metrics" > "results/runALU.ITER${NITERS}.PARALLEL${p}.ROUND${i}.END"
 	    echo "🟢🟢 runALU.ITER${NITERS}.PARALLEL${p}.ROUND${i}.END  🟢🟢"
 	    echo ""
