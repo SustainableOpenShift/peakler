@@ -80,8 +80,8 @@ mainParallelk8s () {
 
     mkdir -p results
 
-    #NPARALLEL=$(($(nproc)-84))
-    NPARALLEL=$(nproc)
+    NPARALLEL=$(($(nproc)-84))
+    #NPARALLEL=$(nproc)
     for (( p=1; p<=$NPARALLEL; p++ )); do
 	for (( i=0; i<$NROUNDS; i++ )); do
 	    #echo "Round ${i}"
@@ -116,5 +116,6 @@ mainParallel () {
     wait
 }
 
+mainParallelk8s "$@"
 #main "$@"
-mainParallel "$@"
+#mainParallel "$@"
