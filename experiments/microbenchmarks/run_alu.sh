@@ -9,6 +9,7 @@ SCRIPT_NAME=$0
 NROUNDS=1
 NITERS=1
 ENDPOINT=""
+NPARALLEL=$(nproc)
 
 usage () {
     cat << END_USAGE
@@ -20,6 +21,7 @@ Usage: ${SCRIPT_NAME} <options>
 -n | --nr         : number of rounds for experiment
 -i | --it         : iterations to run for runALU
 -e | --ep         : endpoint ip:port
+-p | --pa         : number of parallel cpus to use
 -h | --hp         : usage
 
 END_USAGE
@@ -42,7 +44,11 @@ processOptions () {
 	    -e | --ep)
 		ENDPOINT="$2"
                 shift 2
-            ;;
+	    ;;
+	    -p | --pa)
+		NPARALLEL="$2"
+                shift 2
+	    ;;	    
             -h | --help)
                 usage
                 exit 0
@@ -69,7 +75,7 @@ main () {
     done
 }
 
-mainParallel () {
+mainParallelk8s () {
     processOptions "$@"
 
     mkdir -p results
@@ -93,6 +99,21 @@ mainParallel () {
 	    sleep 5
 	done
     done
+}
+
+runPerfStat() {
+    echo $1
+    
+}
+
+mainParallel () {
+    processOptions "$@"
+    
+    for (( j=1; j<=$NPARALLEL; j++ )); do
+	#echo "taskset -c $(($(nproc)-$j)) ./build/runALU ${NITERS} &"
+	taskset -c $(($(nproc)-$j)) ./build/runALU ${NITERS} &
+    done
+    wait
 }
 
 #main "$@"
