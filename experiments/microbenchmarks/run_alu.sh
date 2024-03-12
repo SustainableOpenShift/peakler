@@ -85,12 +85,10 @@ mainParallelk8s () {
     
     ## Warmup run on all the cores
     echo "🟢🟢 Warmup run  🟢🟢"
-    for (( p=1; p<=$NPARALLEL; p++ )); do
-	for (( j=1; j<=$p; j++ )); do
-	    taskset -c $(($(nproc)-$j)) ./build/runALU ${NITERS} &
-	done
-	wait
+    for (( j=1; j<=$NPARALLEL; j++ )); do
+	taskset -c $(($(nproc)-$j)) ./build/runALU ${NITERS} &
     done
+    wait
 
     # Do actual run
     for (( p=1; p<=$NPARALLEL; p++ )); do
