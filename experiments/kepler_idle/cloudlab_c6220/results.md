@@ -1,4 +1,5 @@
 ## Normal idle power: CPU Package, DRAM
+```
 hand32@node1:~/peakler/experiments/kepler_idle/cloudlab_c6220$ tail -f /tmp/rapl.log
 10.719421 10.099686
 17.33049 10.944229
@@ -24,6 +25,7 @@ hand32@node1:~/peakler/experiments/kepler_idle/cloudlab_c6220$ tail -f /tmp/rapl
 17.117844 11.151062
 12.811157 10.369446
 11.353714 10.203079
+```
 
 ## After setting up k8s+prometheus+kepler
 ```
