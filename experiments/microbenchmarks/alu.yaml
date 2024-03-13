@@ -33,7 +33,7 @@ spec:
               sleep 30d
           env:
             - name: ENDPOINT
-              value: "10.244.200.207:9102"
+              value: "10.244.200.205:9102"
             - name: NROUNDS
               value: "3"
             - name: NITERS
