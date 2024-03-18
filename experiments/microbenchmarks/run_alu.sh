@@ -127,6 +127,22 @@ mainParallel () {
     wait
 }
 
-mainParallelk8s "$@"
-#main "$@"
-#mainParallel "$@"
+single () {
+    processOptions "$@"
+
+    # Count down 
+    for (( j=0; j<10; j++ )); do
+	echo "🟢🟢 Count down $((10-j)) 🟢🟢"
+	sleep 1
+    done
+
+    echo "taskset -c $(($(nproc)-1)) ./build/runALU ${NITERS}" 
+    taskset -c $(($(nproc)-1)) ./build/runALU ${NITERS}
+
+    for (( j=0; j<10; j++ )); do
+	echo "🟢🟢 Count down $((10-j)) 🟢🟢"
+	sleep 1
+    done
+}
+
+"$@"
