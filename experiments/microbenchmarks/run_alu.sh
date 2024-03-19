@@ -130,6 +130,10 @@ mainParallel () {
 single () {
     processOptions "$@"
 
+    echo "🟢🟢 Warmup run 🟢🟢"
+    echo "taskset -c $(($(nproc)-1)) ./build/runALU 300" 
+    taskset -c $(($(nproc)-1)) ./build/runALU 300
+    
     # Count down 
     for (( j=0; j<10; j++ )); do
 	echo "🟢🟢 Count down $((10-j)) 🟢🟢"
