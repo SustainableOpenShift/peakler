@@ -38,4 +38,4 @@ spec:
             - name: NITERS
               value: "9000"
             - name: ALUFUNCTION
-              value: "single"
+              value: "multiple"

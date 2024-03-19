@@ -149,4 +149,32 @@ single () {
     done
 }
 
+multiple () {
+    processOptions "$@"
+
+    echo "🟢🟢 Warmup run 🟢🟢"
+    for (( j=1; j<=$NPARALLEL; j++ )); do
+	echo "taskset -c $(($(nproc)-$j)) ./build/runALU 1000 &" 
+	taskset -c $(($(nproc)-$j)) ./build/runALU 1000 &
+    done
+    wait
+    
+    # Count down 
+    for (( j=0; j<10; j++ )); do
+	echo "🟢🟢 Count down $((10-j)) 🟢🟢"
+	sleep 1
+    done
+
+    for (( j=1; j<=$NPARALLEL; j++ )); do
+	echo "taskset -c $(($(nproc)-$j)) ./build/runALU ${NITERS} &" 
+	taskset -c $(($(nproc)-$j)) ./build/runALU ${NITERS} &
+    done
+    wait
+
+    for (( j=0; j<10; j++ )); do
+	echo "🟢🟢 Count down $((10-j)) 🟢🟢"
+	sleep 1
+    done
+}
+
 "$@"
