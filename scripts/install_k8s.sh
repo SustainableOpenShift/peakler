@@ -61,3 +61,12 @@ sudo kubeadm config images pull
 
 # install golang for kepler
 sudo apt-get install -y golang
+
+# disable HyperThreads
+echo off | sudo tee /sys/devices/system/cpu/smt/control
+
+# disable TurboBoost
+echo "1" | sudo tee /sys/devices/system/cpu/intel_pstate/no_turbo
+
+# disable irq rebalance
+sudo killall irqbalance
