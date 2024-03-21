@@ -86,8 +86,10 @@ mainParallelk8s () {
     ## Warmup run on all the cores
     echo "🟢🟢 Warmup run  🟢🟢"
     for (( j=1; j<=$NPARALLEL; j++ )); do
-	echo "	taskset -c $(($(nproc)-$j)) ./build/runALU ${NITERS} &"
-	taskset -c $(($(nproc)-$j)) ./build/runALU ${NITERS} &
+	#echo "	taskset -c $(($(nproc)-$j)) ./build/runALU ${NITERS} &"
+	#taskset -c $(($(nproc)-$j)) ./build/runALU ${NITERS} &
+	echo "  ./build/runALU ${NITERS} &"
+	./build/runALU ${NITERS} &
     done
     wait
 
@@ -100,8 +102,8 @@ mainParallelk8s () {
 	    curl "${ENDPOINT}/metrics" > "results/runALU.ITER${NITERS}.PARALLEL${p}.ROUND${i}.START"
 	    
 	    for (( j=1; j<=$p; j++ )); do
-		echo "	taskset -c $(($(nproc)-$j)) ./build/runALU ${NITERS} &"
-		taskset -c $(($(nproc)-$j)) ./build/runALU ${NITERS} &
+		echo "  ./build/runALU ${NITERS} &"
+		./build/runALU ${NITERS} &
 	    done
 	    wait
 	    sleep 3
