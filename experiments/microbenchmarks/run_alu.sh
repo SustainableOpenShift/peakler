@@ -10,6 +10,7 @@ NROUNDS=1
 NITERS=1
 ENDPOINT=""
 NPARALLEL=$(nproc)
+PINCORE=0
 
 usage () {
     cat << END_USAGE
@@ -22,6 +23,7 @@ Usage: ${SCRIPT_NAME} <options>
 -i | --it         : iterations to run for runALU
 -e | --ep         : endpoint ip:port
 -p | --pa         : number of parallel cpus to use
+-c | --co         : core to pin on
 -h | --hp         : usage
 
 END_USAGE
@@ -47,6 +49,10 @@ processOptions () {
 	    ;;
 	    -p | --pa)
 		NPARALLEL="$2"
+                shift 2
+	    ;;
+	    -c | --co)
+	        PINCORE="$2"
                 shift 2
 	    ;;	    
             -h | --help)
@@ -88,8 +94,8 @@ mainParallelk8s () {
     for (( j=1; j<=$NPARALLEL; j++ )); do
 	#echo "	taskset -c $(($(nproc)-$j)) ./build/runALU ${NITERS} &"
 	#taskset -c $(($(nproc)-$j)) ./build/runALU ${NITERS} &
-	echo "  ./build/runALU ${NITERS} &"
-	./build/runALU ${NITERS} &
+	echo "  taskset -c $PINCORE ./build/runALU ${NITERS} &"
+	taskset -c $PINCORE ./build/runALU ${NITERS} &
     done
     wait
 
@@ -99,16 +105,16 @@ mainParallelk8s () {
 	    echo "🟢🟢 runALU.ITER${NITERS}.PARALLEL${p}.ROUND${i}.START  🟢🟢"
 
 	    sleep 3	    
-	    curl "${ENDPOINT}/metrics" > "results/runALU.ITER${NITERS}.PARALLEL${p}.ROUND${i}.START"
+	    curl "${ENDPOINT}/metrics" > "results/runALU.ITER${NITERS}.PARALLEL${p}.ROUND${i}.PINCORE${PINCORE}.START"
 	    
 	    for (( j=1; j<=$p; j++ )); do
-		echo "  ./build/runALU ${NITERS} &"
-		./build/runALU ${NITERS} &
+		echo "  taskset -c $PINCORE ./build/runALU ${NITERS} &"
+		taskset -c $PINCORE ./build/runALU ${NITERS} &
 	    done
 	    wait
 	    sleep 3
 	    
-	    curl "${ENDPOINT}/metrics" > "results/runALU.ITER${NITERS}.PARALLEL${p}.ROUND${i}.END"
+	    curl "${ENDPOINT}/metrics" > "results/runALU.ITER${NITERS}.PARALLEL${p}.ROUND${i}.PINCORE${PINCORE}.END"
 	    echo "🟢🟢 runALU.ITER${NITERS}.PARALLEL${p}.ROUND${i}.END  🟢🟢"
 	    echo ""
 	    sleep 5

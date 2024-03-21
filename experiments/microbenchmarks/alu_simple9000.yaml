@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: microbench-alu
+  name: microbench-alu-9000
 spec:
   template:
     spec:
@@ -27,7 +27,7 @@ spec:
               nproc;
               ls;
               chmod +x *.sh;
-              bash ./run_alu.sh $ALUFUNCTION -n $NROUNDS -i $NITERS -e $ENDPOINT -p $NPARALLEL || exit 1;
+              bash ./run_alu.sh $ALUFUNCTION -n $NROUNDS -i $NITERS -e $ENDPOINT -p $NPARALLEL -c $PINCORE || exit 1;
               echo "🟢🟢 Done. Sleeping for 30 days 🟢🟢";
               sleep 30d
           env:
@@ -36,7 +36,9 @@ spec:
             - name: NROUNDS
               value: "3"
             - name: NITERS
-              value: "18000"
+              value: "9000"
+            - name: PINCORE
+              value: "1"
             - name: NPARALLEL
               value: "1"
             - name: ALUFUNCTION
