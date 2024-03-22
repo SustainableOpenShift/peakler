@@ -63,10 +63,10 @@ sudo kubeadm config images pull
 sudo apt-get install -y golang
 
 # disable HyperThreads
-echo off | sudo tee /sys/devices/system/cpu/smt/control
+#echo off | sudo tee /sys/devices/system/cpu/smt/control
 
 # disable TurboBoost
-echo "1" | sudo tee /sys/devices/system/cpu/intel_pstate/no_turbo
+#echo "1" | sudo tee /sys/devices/system/cpu/intel_pstate/no_turbo
 
 # disable irq rebalance
-sudo killall irqbalance
+#sudo killall irqbalance
