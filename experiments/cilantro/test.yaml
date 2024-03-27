@@ -1,0 +1,31 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: microbench-test
+spec:
+  template:
+    spec:
+      hostNetwork: true
+      restartPolicy: Never
+      containers:
+        - name: centos8
+          image: public.ecr.aws/cilantro/cilantro:latest
+          securityContext:
+            privileged: true
+          command:
+            - 'bash'
+            - '-c'
+            - >
+              echo "🟢🟢 Done. Sleeping for 30 days 🟢🟢";
+              sleep 30d
+          env:
+            - name: ENDPOINT
+              value: "10.10.223.15:9102"
+            - name: NROUNDS
+              value: "3"
+            - name: NITERS
+              value: "18000"
+            - name: NPARALLEL
+              value: "1"
+            - name: ALUFUNCTION
+              value: "mainParallelk8s"
