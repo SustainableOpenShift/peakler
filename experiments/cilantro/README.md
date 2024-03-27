@@ -14,4 +14,6 @@ parallel-ssh -i -h ~/.pssh_hosts_files -- rm -rf peakler
 
 crontab crontab.txt
 crontab -r
+parallel-ssh -i -h ~/.pssh_hosts_files -- crontab ~/peakler/experiments/cilantro/crontab_sensors.txt
+parallel-ssh -i -h ~/.pssh_hosts_files -- crontab -r
 ```
