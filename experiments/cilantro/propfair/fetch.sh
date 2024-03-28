@@ -4,7 +4,7 @@ set -x
 
 mkdir -p results
 
-for ((t=0;t<1;t++)); do
+for ((t=0;t<7;t++)); do
     kubectl logs $(kubectl get pods | awk '/cilantroscheduler/ {print $1;exit}') > results/cilantroscheduler.log
     kubectl -c 'hr-client' logs $(kubectl get pods | awk '/hr-client/ {print $1;exit}') > results/hr-client.log
     kubectl -c 'cilantro-hr-client' logs $(kubectl get pods | awk '/hr-client/ {print $1;exit}') > results/cilantro-hr-client.log
@@ -20,6 +20,7 @@ for ((t=0;t<1;t++)); do
 	mkdir -p results/10-10-1-$i-sensors
 	scp -o ConnectTimeout=30 -r 10.10.1.$i:/tmp/sensors.* results/10-10-1-$i-sensors/
     done
-    
-    #sleep 3600
+
+    echo "Sleeping for 1 hour ......"
+    sleep 3600
 done
