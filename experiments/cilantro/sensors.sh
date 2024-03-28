@@ -1,3 +1,4 @@
 #!/bin/bash
 
-sensors -j > "/tmp/sensors.$(date +%m%d%Y%H%M%S)".json
+mkdir -p /users/$(whoami)/sensors
+sensors -j > "/users/$(whoami)/sensors/sensors.$(date +%m%d%Y%H%M%S)".json
