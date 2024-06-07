@@ -56,3 +56,21 @@ STDOUT_Publisher[Msg 0]: {'load': 18284.0, 'reward': 16121.289, 'alloc': -1, 'si
 06-07 18:42:12 | INFO   | cilantro_clients.data_sources.logfolder_data_source || Got 0 new files to analyze. Last file was /cilantrologs/output_20240607-184136.log
 06-07 18:42:13 | INFO   | cilantro_clients.data_sources.logfolder_data_source || Got 0 new files to analyze. Last file was /cilantrologs/output_20240607-184136.log
 ```
+
+## Launch cilantroscheduler.yaml
+```
+[root@cilantroscheduler-df94f49f9-z2jj4 /]# python3 /cilantro/experiments/microservices/driver.py --real-or-dummy real --policy peaks
+/usr/local/lib/python3.6/site-packages/dragonfly/utils/oper_utils.py:30: UserWarning: cannot import name 'direct'
+Could not import Fortran direct library. Dragonfly can still be used, but might be slightly slower. To get rid of this warning, install a numpy compatible Fortran compiler (e.g. gfortran) and the python-dev package and reinstall Dragonfly.
+  warn('%s\n%s'%(e, fortran_err_msg))
+06-07 18:56:36 | INFO   | __main__                                 || Created Env: Env(#nodes=20, #leaf-nodes=19):: (consul, e0.05, t1.00), (frontend, e0.05, t1.00), (geo, e0.05, t1.00), (jaeger, e0.05, t1.00), (memcached-profile, e0.05, t1.00), (memcached-rate, e0.05, t1.00), (memcached-reserve, e0.05, t1.00), (mongodb-geo, e0.05, t1.00), (mongodb-profile, e0.05, t1.00), (mongodb-rate, e0.05, t1.00), (mongodb-recommendation, e0.05, t1.00), (mongodb-reservation, e0.05, t1.00), (mongodb-user, e0.05, t1.00), (profile, e0.05, t1.00), (rate, e0.05, t1.00), (recommendation, e0.05, t1.00), (reservation, e0.05, t1.00), (search, e0.05, t1.00), (user, e0.05, t1.00)..
+06-07 18:56:37 | DEBUG  | cilantro.scheduler.cilantroscheduler     || Waiting for event.
+06-07 18:56:37 | DEBUG  | cilantro.scheduler.cilantroscheduler     || Allocation timeout, type:EventTypes.ALLOC_TIMEOUT
+06-07 18:56:37 | INFO   | cilantro.policies.peaks                  || [PEAKS]
+06-07 18:56:37 | INFO   | cilantro.policies.peaks                  || [PEAKS] num_leafs = 19 loads = {'hr-client': 1}
+06-07 18:56:37 | INFO   | cilantro.policies.peaks                  || [PEAKS] alloc_ratios = {'root--consul': 1, 'root--frontend': 1, 'root--geo': 1, 'root--jaeger': 1, 'root--memcached-profile': 1, 'root--memcached-rate': 1, 'root--memcached-reserve': 1, 'root--mongodb-geo': 1, 'root--mongodb-profile': 1, 'root--mongodb-rate': 1, 'root--mongodb-recommendation': 1, 'root--mongodb-reservation': 1, 'root--mongodb-user': 1, 'root--profile': 1, 'root--rate': 1, 'root--recommendation': 1, 'root--reservation': 1, 'root--search': 1, 'root--user': 1}
+06-07 18:56:37 | INFO   | cilantro.policies.peaks                  || [PEAKS]
+06-07 18:56:37 | DEBUG  | cilantro.scheduler.cilantroscheduler     || Received new allocation from policy - {'root--consul': 1, 'root--frontend': 1, 'root--geo': 1, 'root--jaeger': 1, 'root--memcached-profile': 1, 'root--memcached-rate': 1, 'root--memcached-reserve': 1, 'root--mongodb-geo': 1, 'root--mongodb-profile': 1, 'root--mongodb-rate': 1, 'root--mongodb-recommendation': 1, 'root--mongodb-reservation': 1, 'root--mongodb-user': 1, 'root--profile': 1, 'root--rate': 1, 'root--recommendation': 1, 'root--reservation': 1, 'root--search': 1, 'root--user': 1}
+06-07 18:56:37 | DEBUG  | cilantro.scheduler.cilantroscheduler     || Executed resource allocation from framework manager.
+06-07 18:56:37 | DEBUG  | cilantro.scheduler.cilantroscheduler     || Waiting for event.
+```
