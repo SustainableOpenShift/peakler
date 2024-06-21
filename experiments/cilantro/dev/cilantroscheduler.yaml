@@ -5,6 +5,7 @@ metadata:
   labels:
     app: cilantroscheduler
 spec:
+  nodeName: node0.hand32-209836.bayopsys-pg0.wisc.cloudlab.us
   replicas: 1
   selector:
     matchLabels:
@@ -34,7 +35,8 @@ spec:
             cd /cilantro;
             pip3 install -r requirements.txt;
             pip3 install -e .;
-            sleep 30d
+            cd /;
+            python3 /cilantro/experiments/microservices/driver.py --real-or-dummy real --policy ucbopt
 ---
 apiVersion: v1
 kind: Service

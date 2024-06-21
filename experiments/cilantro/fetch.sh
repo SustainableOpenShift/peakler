@@ -21,11 +21,11 @@ for ((t=0;t<$NITERS;t++)); do
     kubectl -c 'hr-client' logs $(kubectl get pods | awk '/hr-client/ {print $1;exit}') > $SCHED/results/hr-client.log
     kubectl -c 'cilantro-hr-client' logs $(kubectl get pods | awk '/hr-client/ {print $1;exit}') > $SCHED/results/cilantro-hr-client.log
     
-    kubectl cp $(kubectl get pods | awk '/hr-client/ {print $1;exit}'):/cilantrologs $SCHED/results/cilantrologs    
+    kubectl cp $(kubectl get pods | awk '/hr-client/ {print $1;exit}'):/cilantrologs $SCHED/results/cilantrologs
     kubectl cp $(kubectl get pods | awk '/cilantroscheduler/ {print $1;exit}'):/cilantro/workdirs $SCHED/results/workdirs
 
-    kubectl get pods -o wide > $SCHED/results/kubectl.pods
-    kubectl get pods -o wide --all-namespaces > $SCHED/results/kubectl-all-namespaces.pods
+    kubectl get pods -o wide > $SCHED/results/kubectl.pods.$t
+    kubectl get pods -o wide --all-namespaces > $SCHED/results/kubectl-all-namespaces.pods.$t
     
     echo "Sleeping for 1 hour ......"
     sleep 3600
