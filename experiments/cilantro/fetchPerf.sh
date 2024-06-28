@@ -3,14 +3,15 @@
 #set -x
 
 export NITERS=${NITERS:=1}
+export WORKERS=${WORKERS:="192.168.1.2 192.168.1.3 192.168.1.4"}
 #export WORKERS=${WORKERS:="192.168.1.2 192.168.1.3 192.168.1.5 192.168.1.6"}
-export WORKERS=${WORKERS:="192.168.1.2 192.168.1.5 192.168.1.6 192.168.1.7 192.168.1.8"}
+#export WORKERS=${WORKERS:="192.168.1.2 192.168.1.5 192.168.1.6 192.168.1.7 192.168.1.8"}
 export SCHED=${SCHED:="default"}
 
 mkdir -p $SCHED/results
 
 for w in $WORKERS; do
-    ssh $w "nohup perf stat -a -e power/energy-pkg/ -x, -I 1000 sleep 14400 > perf.log 2>&1 &"
+    ssh $w "nohup perf stat -a -e power/energy-pkg/ -x, -I 1000 sleep $(( $NITERS*3600 )) > perf.log 2>&1 &"
 done
 
 
