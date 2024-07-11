@@ -10,7 +10,7 @@ metadata:
     is_workload: "true"
   name: root--mongodb-reservation
 spec:
-  replicas: 4
+  replicas: 3
   selector:
     matchLabels:
       io.kompose.service: mongodb-reservation

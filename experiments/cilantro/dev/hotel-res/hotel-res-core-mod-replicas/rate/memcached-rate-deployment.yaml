@@ -10,7 +10,7 @@ metadata:
     is_workload: "true"
   name: root--memcached-rate
 spec:
-  replicas: 7
+  replicas: 3
   selector:
     matchLabels:
       io.kompose.service: memcached-rate

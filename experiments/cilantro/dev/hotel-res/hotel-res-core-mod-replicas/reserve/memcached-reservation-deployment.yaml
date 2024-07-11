@@ -10,7 +10,7 @@ metadata:
     is_workload: "true"
   name: root--memcached-reserve
 spec:
-  replicas: 5
+  replicas: 6
   selector:
     matchLabels:
       io.kompose.service: memcached-reserve

@@ -10,7 +10,7 @@ metadata:
     is_workload: "true"
   name: root--recommendation
 spec:
-  replicas: 5
+  replicas: 4
   selector:
     matchLabels:
       io.kompose.service: recommendation

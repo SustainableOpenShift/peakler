@@ -10,7 +10,7 @@ metadata:
     is_workload: "true"
   name: root--search
 spec:
-  replicas: 14
+  replicas: 4
   selector:
     matchLabels:
       io.kompose.service: search

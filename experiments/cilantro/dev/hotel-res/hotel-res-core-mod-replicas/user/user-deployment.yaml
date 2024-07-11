@@ -10,7 +10,7 @@ metadata:
     is_workload: "true"
   name: root--user
 spec:
-  replicas: 6
+  replicas: 96
   selector:
     matchLabels:
       io.kompose.service: user

@@ -10,7 +10,7 @@ metadata:
     is_workload: "true"
   name: root--jaeger
 spec:
-  replicas: 5
+  replicas: 8
   selector:
     matchLabels:
       io.kompose.service: jaeger

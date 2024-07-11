@@ -10,7 +10,7 @@ metadata:
     is_workload: "true"
   name: root--reservation
 spec:
-  replicas: 7
+  replicas: 16
   selector:
     matchLabels:
       io.kompose.service: reservation

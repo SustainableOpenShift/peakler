@@ -10,7 +10,7 @@ metadata:
     is_workload: "true"
   name: root--frontend
 spec:
-  replicas: 16
+  replicas: 5
   selector:
     matchLabels:
       io.kompose.service: frontend

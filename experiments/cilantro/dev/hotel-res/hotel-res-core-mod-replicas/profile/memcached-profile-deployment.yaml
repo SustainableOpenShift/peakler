@@ -10,7 +10,7 @@ metadata:
     is_workload: "true"
   name: root--memcached-profile
 spec:
-  replicas: 6
+  replicas: 4
   selector:
     matchLabels:
       io.kompose.service: memcached-profile

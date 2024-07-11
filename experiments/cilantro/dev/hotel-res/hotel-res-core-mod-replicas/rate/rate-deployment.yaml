@@ -10,7 +10,7 @@ metadata:
     is_workload: "true"
   name: root--rate
 spec:
-  replicas: 5
+  replicas: 13
   selector:
     matchLabels:
       io.kompose.service: rate
