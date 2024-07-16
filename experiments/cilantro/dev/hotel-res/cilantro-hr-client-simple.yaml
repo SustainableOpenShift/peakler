@@ -21,6 +21,7 @@ spec:
 #      annotations:
 #        sidecar.istio.io/inject: "true"
     spec:
+      nodeName: client1.hand32-211847.bayopsys-pg0.wisc.cloudlab.us
       volumes:
         - name: log-share
           emptyDir: {}
