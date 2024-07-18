@@ -23,15 +23,19 @@ for node in node_list.items:
 
 ret = v1.list_namespaced_pod(namespace="default", watch=False)
 for pod in ret.items:
-    if 'frontend' in pod.metadata.name:
+    #if 'frontend' in pod.metadata.name:
+    if 'root--memcached-profile' in pod.metadata.name:
         #print(pod)
         print(f"Name: {pod.metadata.name}\n\tNamespace: {pod.metadata.namespace}\n\tIP: {pod.status.pod_ip}\n\tNode: {pod.spec.node_name}")
         #body = {"spec": {"replicas": 2, "nodeName": "server5.hand32-211847.bayopsys-pg0.wisc.cloudlab.us"}}
         #body = {"spec": {"nodeName": "server5.hand32-211847.bayopsys-pg0.wisc.cloudlab.us"}}
-        body = {"spec":{"template":{"spec":{"nodeName": "server5.hand32-211847.bayopsys-pg0.wisc.cloudlab.us"}}}}
+        #body = {"spec":{"template":{"spec":{"nodeName": "server5.hand32-211847.bayopsys-pg0.wisc.cloudlab.us"}}}}
+        body = {"spec":{"replicas": 2, "template":{"spec":{"nodeName": "server5.hand32-211847.bayopsys-pg0.wisc.cloudlab.us"}}}}
+        
         try:
             #appsapi.patch_namespaced_deployment_scale("root--frontend", namespace="default", body=body)
-            appsapi.patch_namespaced_deployment("root--frontend", namespace="default", body=body)
+            #appsapi.patch_namespaced_deployment("root--frontend", namespace="default", body=body)
+            appsapi.patch_namespaced_deployment("root--memcached-profile", namespace="default", body=body)
         except ApiException as e:
             print("Failed to scale {pod.metadata.name}")
             raise e
