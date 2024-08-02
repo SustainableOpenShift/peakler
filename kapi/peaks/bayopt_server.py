@@ -9,9 +9,9 @@ from ax.service.ax_client import AxClient, ObjectiveProperties
 from ax.modelbridge.generation_strategy import GenerationStrategy, GenerationStep
 from ax.modelbridge.registry import Models
 
-#from k8s_manager import K8sManager
-#from logfolder_data_source import LogFolderDataSource
-#from wrk2_log_parser import WrkLogParser
+from k8s_manager import K8sManager
+from logfolder_data_source import LogFolderDataSource
+from wrk2_log_parser import WrkLogParser
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s | %(levelname)s| %(filename)-10s | %(funcName)-20s || %(message)s')
@@ -25,7 +25,10 @@ HOTELRES_MICROSERVICES = ['consul', 'frontend', 'geo', 'jaeger',
                           'reservation', 'search', 'user']
 
 def checkValidParams(params):
-    print(params)
+    numAllocs = 0
+    for key in params.keys():
+        numAllocs = numAllocs + params[key]
+    logger.info(f"numAllocs: {numAllocs}")
     
 def evalpeaks(pname):
     reward = 0.0
@@ -35,15 +38,15 @@ def evalpeaks(pname):
     return res
 
 if __name__ == "__main__":
-    #k8sm = K8sManager()
+    k8sm = K8sManager()
     #k8sm.list_pods()
-    #res = k8sm.get_cluster_resources()
-    #logger.info(f"k8sm.get_cluster_resources() {res}")
-    #logger.info(f"k8sm.all_pods_running(): {k8sm.all_pods_running()}")
+    res = k8sm.get_cluster_resources()
+    logger.info(f"k8sm.get_cluster_resources() {res}")
+    logger.info(f"k8sm.all_pods_running(): {k8sm.all_pods_running()}")
 
-    #log_parser = WrkLogParser()
-    #data_source = LogFolderDataSource(log_dir_path="/cilantrologs",
-    #                                  log_parser=log_parser)
+    log_parser = WrkLogParser()
+    data_source = LogFolderDataSource(log_dir_path="/cilantrologs",
+                                      log_parser=log_parser)
 
     model_kwargs={
         "seed": 999,
@@ -82,7 +85,6 @@ if __name__ == "__main__":
     pname = "peaks"
     params = []
     cons = ""
-    res=48.0
     for s in HOTELRES_MICROSERVICES:
         d = {}
         d['name'] = "root--"+s
@@ -103,11 +105,11 @@ if __name__ == "__main__":
         parameter_constraints=[cons],  # Optional.
     )
 
-    for i in range(0, 2):
+    for i in range(0, 20):
         parameterization, trial_index = ax_client.get_next_trial()
         checkValidParams(parameterization)
         #ax_client.log_trial_failure(trial_index=trial_index)
-        #ax_client.complete_trial(trial_index=trial_index, raw_data=evalpeaks(pname))
+        ax_client.complete_trial(trial_index=trial_index, raw_data=evalpeaks(pname))
             
     """
     #logger.info("scaling..")
