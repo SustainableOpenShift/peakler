@@ -15,9 +15,6 @@ from k8s_manager import K8sManager
 from logfolder_data_source import LogFolderDataSource
 from wrk2_log_parser import WrkLogParser
 
-#logger = logging.getLogger(__name__)
-#logging.basicConfig(level=logging.INFO, format='%(asctime)s | %(levelname)s| %(filename)-10s | %(funcName)-20s || %(message)s')
-
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 # create file handler which logs even debug messages
@@ -67,7 +64,9 @@ def evalpeaks(pname, valid, data_source):
         if data:
             jdata = json.loads(data["debug"])
             logger.info(f"p99 rewar: {jdata['p99']}")
-            reward = jdata['p99']        
+            reward = jdata['p99']
+        else:
+            logger.info(f"No new P99 data???")
     
     res = {
         pname: (reward, 0.0)
@@ -152,7 +151,8 @@ if __name__ == "__main__":
         parameter_constraints=[consl, consh],  # Optional.
     )
 
-    for i in range(0, 30):
+    ## about 12 hours
+    for i in range(0, 360):
         parameterization, trial_index = ax_client.get_next_trial()
         ret = checkValidParams(parameterization, res, k8sm)
         logger.info(f"checkValidParams: {ret}")
@@ -160,6 +160,12 @@ if __name__ == "__main__":
             ax_client.log_trial_failure(trial_index=trial_index)
         else:
             ax_client.complete_trial(trial_index=trial_index, raw_data=evalpeaks(pname, ret, data_source))
+        ax_client.save_to_json_file()
+        
+    best_parameters, values = ax_client.get_best_parameters()    
+    logger.info(f"ax best_parameters: {best_parameters}")
+    logger.info(f"trace: {ax_client.get_trace()}")
+    logger.info(f"**** EXPERIMENT COMPLETE *******")
             
     """
     #logger.info("scaling..")
