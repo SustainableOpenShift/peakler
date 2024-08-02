@@ -1,6 +1,8 @@
 import time
 import logging
 import json
+import random
+import math
 
 import pandas as pd
 import numpy as np
@@ -13,8 +15,26 @@ from k8s_manager import K8sManager
 from logfolder_data_source import LogFolderDataSource
 from wrk2_log_parser import WrkLogParser
 
+#logger = logging.getLogger(__name__)
+#logging.basicConfig(level=logging.INFO, format='%(asctime)s | %(levelname)s| %(filename)-10s | %(funcName)-20s || %(message)s')
+
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO, format='%(asctime)s | %(levelname)s| %(filename)-10s | %(funcName)-20s || %(message)s')
+logger.setLevel(logging.INFO)
+# create file handler which logs even debug messages
+fh = logging.FileHandler(f"bayopt_server.log")
+fh.setLevel(logging.INFO)
+# create console handler with a higher log level
+ch = logging.StreamHandler()
+ch.setLevel(logging.INFO)
+
+# create formatter and add it to the handlers
+formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(filename)-10s | %(funcName)-20s || %(message)s',
+                              datefmt='%m-%d %H:%M:%S')
+fh.setFormatter(formatter)
+ch.setFormatter(formatter)
+# add the handlers to the logger
+logger.addHandler(fh)
+logger.addHandler(ch)
 
 HOTELRES_MICROSERVICES = ['consul', 'frontend', 'geo', 'jaeger',
                           'memcached-profile', 'memcached-rate',
@@ -24,14 +44,31 @@ HOTELRES_MICROSERVICES = ['consul', 'frontend', 'geo', 'jaeger',
                           'mongodb-user', 'profile', 'rate', 'recommendation',
                           'reservation', 'search', 'user']
 
-def checkValidParams(params):
+def checkValidParams(params, res, k8sm):
     numAllocs = 0
     for key in params.keys():
-        numAllocs = numAllocs + params[key]
-    logger.info(f"numAllocs: {numAllocs}")
+        #nAlloc = int((params[key]*res))
+        #nAlloc = int(params[key])
+        nAlloc = round(params[key])
+        numAllocs = numAllocs + nAlloc
+        logger.info(f"Scaling {key}: {nAlloc} {params[key]}")
+        k8sm.scale_deployment(name=key, replicas=nAlloc)
+    logger.info(f"Sleeping 60 seconds for the new {numAllocs} allocations to settle.")
+    time.sleep(60)
+    return k8sm.all_pods_running()
     
-def evalpeaks(pname):
-    reward = 0.0
+def evalpeaks(pname, valid, data_source):
+    logger.info(f"Sleeping 60 seconds for the hr-client to generate new files.")
+    time.sleep(60)
+    
+    reward = 999999.0
+    if valid == True:
+        data = data_source.get_data()
+        if data:
+            jdata = json.loads(data["debug"])
+            logger.info(f"p99 rewar: {jdata['p99']}")
+            reward = jdata['p99']        
+    
     res = {
         pname: (reward, 0.0)
     }
@@ -81,7 +118,8 @@ if __name__ == "__main__":
     )
     
     """ setup ax """
-    ax_client = AxClient(generation_strategy=gs, enforce_sequential_optimization=False, verbose_logging=True)
+    #ax_client = AxClient(generation_strategy=gs, enforce_sequential_optimization=False, verbose_logging=True)
+    ax_client = AxClient(generation_strategy=gs, enforce_sequential_optimization=False)
     pname = "peaks"
     params = []
     cons = ""
@@ -90,26 +128,38 @@ if __name__ == "__main__":
         d['name'] = "root--"+s
         cons = cons + d['name']+" + "
         d['type'] = "range"
+        #d['value_type'] = "float"
         d['value_type'] = "int"
         d['log_scale'] = False
-        d['bounds'] = [1, int(res)-int(len(HOTELRES_MICROSERVICES))]
+        d['bounds'] = [1, int(res)-len(HOTELRES_MICROSERVICES)-1]
+        #d['bounds'] = [1.0, res-len(HOTELRES_MICROSERVICES)-1.0]
+        #d['bounds'] = [(1.0/res), (res-len(HOTELRES_MICROSERVICES))/res]
         params.append(d)
-    cons = cons[:-2]+"<= "+str(int(res))
-    print(cons)
+    #consl = cons[:-2]+"<= "+str(res)
+    #consh = cons[:-2]+">= "+str(res-1)
+    consl = cons[:-2]+"<= "+str(int(res))
+    consh = cons[:-2]+">= "+str(int(res)-1)
+    #consl = cons[:-2]+"<= 1.0"
+    #consh = cons[:-2]+">= 0.98"
+    #print(cons)
     
     ax_client.create_experiment(
         name=pname,
         parameters=params,
         objectives={pname: ObjectiveProperties(minimize=True)},
         choose_generation_strategy_kwargs={"max_parallelism_override": 16},
-        parameter_constraints=[cons],  # Optional.
+        #parameter_constraints=[cons],  # Optional.
+        parameter_constraints=[consl, consh],  # Optional.
     )
 
-    for i in range(0, 20):
+    for i in range(0, 30):
         parameterization, trial_index = ax_client.get_next_trial()
-        checkValidParams(parameterization)
-        #ax_client.log_trial_failure(trial_index=trial_index)
-        ax_client.complete_trial(trial_index=trial_index, raw_data=evalpeaks(pname))
+        ret = checkValidParams(parameterization, res, k8sm)
+        logger.info(f"checkValidParams: {ret}")
+        if ret == False:
+            ax_client.log_trial_failure(trial_index=trial_index)
+        else:
+            ax_client.complete_trial(trial_index=trial_index, raw_data=evalpeaks(pname, ret, data_source))
             
     """
     #logger.info("scaling..")
@@ -117,12 +167,12 @@ if __name__ == "__main__":
     #k8sm.scale_deployment(name="root--mongodb-geo", replicas=1)
     #k8sm.scale_deployment(name="root--mongodb-profile", replicas=1)    
     #time.sleep(10)
-
+    
     #print(k8sm.all_pods_running())
 
     while True:
         try:
-            data = data_source.get_data()
+          data = data_source.get_data()
         except StopIteration as e:
             logger.info(f"{str(e)}")
             break

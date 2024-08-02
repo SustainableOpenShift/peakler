@@ -98,6 +98,7 @@ class K8sManager():
         for pod in pods.items:
             if 'root--' in pod.metadata.name:
                 if pod.status.container_statuses[0].state.running is None:
+                    logger.info(f"{pod.metadata.name} broken.")
                     return False
         return True
                     
