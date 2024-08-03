@@ -19,3 +19,10 @@ allocation {'root--consul': 6.0, 'root--frontend': 6.0, 'root--geo': 6.0, 'root-
  99.000%   16.34s 
  99.000%   20.97s 
 ~~~
+
+### axdev bayesian opt
+~~~
+ 99.000%   13.60s 
+ 99.000%   13.09s 
+ 99.000%   11.32s 
+~~~

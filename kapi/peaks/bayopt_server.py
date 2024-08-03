@@ -50,8 +50,8 @@ def checkValidParams(params, res, k8sm):
         numAllocs = numAllocs + nAlloc
         logger.info(f"Scaling {key}: {nAlloc} {params[key]}")
         k8sm.scale_deployment(name=key, replicas=nAlloc)
-    logger.info(f"Sleeping 60 seconds for the new {numAllocs} allocations to settle.")
-    time.sleep(60)
+    logger.info(f"Sleeping 30 seconds for the new {numAllocs} allocations to settle.")
+    time.sleep(30)
     return k8sm.all_pods_running()
     
 def evalpeaks(pname, valid, data_source):
@@ -59,14 +59,14 @@ def evalpeaks(pname, valid, data_source):
     time.sleep(60)
     
     reward = 999999.0
-    if valid == True:
-        data = data_source.get_data()
-        if data:
-            jdata = json.loads(data["debug"])
-            logger.info(f"p99 rewar: {jdata['p99']}")
-            reward = jdata['p99']
-        else:
-            logger.info(f"No new P99 data???")
+    #if valid == True:
+    data = data_source.get_data()
+    if data:
+        jdata = json.loads(data["debug"])
+        logger.info(f"p99 rewar: {jdata['p99']}")
+        reward = jdata['p99']
+    else:
+        logger.info(f"No new P99 data???")
     
     res = {
         pname: (reward, 0.0)
@@ -134,13 +134,15 @@ if __name__ == "__main__":
         #d['bounds'] = [1.0, res-len(HOTELRES_MICROSERVICES)-1.0]
         #d['bounds'] = [(1.0/res), (res-len(HOTELRES_MICROSERVICES))/res]
         params.append(d)
+    #cons = cons[:-2]+"<= "+str(int(res))
     #consl = cons[:-2]+"<= "+str(res)
     #consh = cons[:-2]+">= "+str(res-1)
     consl = cons[:-2]+"<= "+str(int(res))
-    consh = cons[:-2]+">= "+str(int(res)-1)
+    consh = cons[:-2]+">= "+str((int(res)-1))
     #consl = cons[:-2]+"<= 1.0"
     #consh = cons[:-2]+">= 0.98"
-    #print(cons)
+    print(consl)
+    print(consh)
     
     ax_client.create_experiment(
         name=pname,
@@ -152,49 +154,24 @@ if __name__ == "__main__":
     )
 
     ## about 12 hours
-    for i in range(0, 360):
+    #for i in range(0, 1000):
+    for i in range(0, 600):
         parameterization, trial_index = ax_client.get_next_trial()
         ret = checkValidParams(parameterization, res, k8sm)
         logger.info(f"checkValidParams: {ret}")
-        if ret == False:
-            """
-            https://github.com/facebook/Ax/issues/372
-            difference between abandoning trials and marking them as failed –– when a trial is 'running', it's included in 'pending points' that are passed to the model to indicate that those points should not be re-suggested as they are currently being evaluated. When a trial is 'abandoned', it remains in 'pending points' forever, and when it is marked 'failed', it is removed from pending points. That is because we treat 'failure' as some infrastructural failure during evaluation, which will not necessarily happen again if the same point is re-ran. 'Abandonment', on the other hand, we treat as final decision that a given point should not be part of the experiment.
-            """
-            ax_client.abandon_trial(trial_index=trial_index)
-            #ax_client.log_trial_failure(trial_index=trial_index)
-        else:
-            ax_client.complete_trial(trial_index=trial_index, raw_data=evalpeaks(pname, ret, data_source))
+        #if ret == False:
+        """
+        https://github.com/facebook/Ax/issues/372
+        difference between abandoning trials and marking them as failed –– when a trial is 'running', it's included in 'pending points' that are passed to the model to indicate that those points should not be re-suggested as they are currently being evaluated. When a trial is 'abandoned', it remains in 'pending points' forever, and when it is marked 'failed', it is removed from pending points. That is because we treat 'failure' as some infrastructural failure during evaluation, which will not necessarily happen again if the same point is re-ran. 'Abandonment', on the other hand, we treat as final decision that a given point should not be part of the experiment.
+        """
+        #ax_client.abandon_trial(trial_index=trial_index)
+        #ax_client.log_trial_failure(trial_index=trial_index)
+        #else:
+        ax_client.complete_trial(trial_index=trial_index, raw_data=evalpeaks(pname, ret, data_source))
         ax_client.save_to_json_file()
         
     best_parameters, values = ax_client.get_best_parameters()    
     logger.info(f"ax best_parameters: {best_parameters}")
     logger.info(f"trace: {ax_client.get_trace()}")
     logger.info(f"**** EXPERIMENT COMPLETE *******")
-            
-    """
-    #logger.info("scaling..")
-    #k8sm.scale_deployment(name="root--mongodb-recommendation", replicas=1)
-    #k8sm.scale_deployment(name="root--mongodb-geo", replicas=1)
-    #k8sm.scale_deployment(name="root--mongodb-profile", replicas=1)    
-    #time.sleep(10)
-    
-    #print(k8sm.all_pods_running())
-
-    while True:
-        try:
-          data = data_source.get_data()
-        except StopIteration as e:
-            logger.info(f"{str(e)}")
-            break
-
-        if data:
-            jdata = json.loads(data["debug"])
-            logger.info(jdata['p99'])
-        time.sleep(1)
-    """
-            
-
-
-    
     
