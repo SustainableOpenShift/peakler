@@ -157,7 +157,12 @@ if __name__ == "__main__":
         ret = checkValidParams(parameterization, res, k8sm)
         logger.info(f"checkValidParams: {ret}")
         if ret == False:
-            ax_client.log_trial_failure(trial_index=trial_index)
+            """
+            https://github.com/facebook/Ax/issues/372
+            difference between abandoning trials and marking them as failed –– when a trial is 'running', it's included in 'pending points' that are passed to the model to indicate that those points should not be re-suggested as they are currently being evaluated. When a trial is 'abandoned', it remains in 'pending points' forever, and when it is marked 'failed', it is removed from pending points. That is because we treat 'failure' as some infrastructural failure during evaluation, which will not necessarily happen again if the same point is re-ran. 'Abandonment', on the other hand, we treat as final decision that a given point should not be part of the experiment.
+            """
+            ax_client.abandon_trial(trial_index=trial_index)
+            #ax_client.log_trial_failure(trial_index=trial_index)
         else:
             ax_client.complete_trial(trial_index=trial_index, raw_data=evalpeaks(pname, ret, data_source))
         ax_client.save_to_json_file()
