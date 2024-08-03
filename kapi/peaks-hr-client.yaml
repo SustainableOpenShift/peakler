@@ -81,9 +81,9 @@ spec:
             dnf -y update;
             dnf -y install epel-release;
             dnf -y install gcc gcc-c++ git make emacs python python-pip;
-            pip install ax-platform kubernetes
-            pip uninstall numpy
-            pip install numpy==1.26.3
+            pip install ax-platform kubernetes;
+            pip uninstall numpy;
+            pip install numpy==1.26.3;
             cd /;
             git clone https://github.com/handong32/cilantro.git;
             git clone https://github.com/handong32/peakler.git;
