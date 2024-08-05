@@ -155,7 +155,8 @@ if __name__ == "__main__":
 
     ## about 12 hours
     #for i in range(0, 1000):
-    for i in range(0, 600):
+    #for i in range(0, 600):
+    for i in range(0, 1):
         parameterization, trial_index = ax_client.get_next_trial()
         ret = checkValidParams(parameterization, res, k8sm)
         logger.info(f"checkValidParams: {ret}")

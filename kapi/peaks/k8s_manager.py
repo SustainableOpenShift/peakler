@@ -58,6 +58,15 @@ class K8sManager():
     def get_pods_ns(self, ns: str = 'default'):
         return self.coreapi.list_namespaced_pod(namespace=ns, watch=False)
 
+    # Get the cluster nodes
+    def get_nodes(self, spec=""):
+        ret = []
+        node_list = self.coreapi.list_node()
+        for node in node_list.items:
+            if spec in node.metadata.name:
+                ret.append(node.metadata.name)
+        return ret
+
     def list_pods(self):
         pods = self.get_pods()
         for i in pods.items:
@@ -115,7 +124,29 @@ class K8sManager():
                 d.metadata.labels.get(LABEL_IS_WORKLOAD,
                                       "false").lower() == "true"}  # Filter only deployments which are actual workloads. This is to exclude cilantro client and app client deployments.
         return deps
-    
+
+    def scale_deployment_node(self,
+                              name: str,
+                              replicas: int,
+                              ns: str = None,
+                              node: str = None):
+        """
+        Scale a deployment up or down. The `name` is the name of the deployment.
+        """
+        if ns is None:
+            ns = self.namespace
+        
+        if node is None:            
+            body = {"spec": {"replicas": replicas}}
+        else:
+            body = {"spec":{"replicas": replicas, "template":{"spec":{"nodeName": node}}}}
+            
+        try:
+            self.appsapi.patch_namespaced_deployment(name, namespace=ns, body=body)
+        except ApiException as e:
+            logger.error(f"Failed to scale '{name}' to {replicas} replicas: {str(e)}, node: {node}")
+            raise e
+
     def scale_deployment(self,
                          name: str,
                          replicas: int,
@@ -125,7 +156,9 @@ class K8sManager():
         """
         if ns is None:
             ns = self.namespace
+        
         body = {"spec": {"replicas": replicas}}
+        
         try:
             self.appsapi.patch_namespaced_deployment_scale(name, namespace=ns, body=body)
         except ApiException as e:
