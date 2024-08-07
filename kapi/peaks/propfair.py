@@ -20,7 +20,7 @@ HOTELRES_MICROSERVICES = ['consul', 'frontend', 'geo', 'jaeger',
                           'reservation', 'search', 'user']
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO, format='%(asctime)s | %(levelname)-6s | %(filename)-10s | %(funcName)-20s || %(message)s')
+logging.basicConfig(level=logging.INFO, format='%(asctime)s | %(message)s')
 
 def distribute_value(total, num_items):
     # Calculate the base value each item gets
@@ -42,31 +42,19 @@ if __name__ == "__main__":
     
     #dis = distribute_value(int(res), len(HOTELRES_MICROSERVICES))
     #i = 0
-    #sumd = 0
-    #for s in HOTELRES_MICROSERVICES:
-    #    key = "root--"+s
-    #    nAlloc = dis[i]        
-    #    i += 1
-    #    sumd = sumd + nAlloc
-    k8sm.scale_deployment(name="root--consul", replicas=6)
-    k8sm.scale_deployment(name="root--frontend", replicas=6)
-    k8sm.scale_deployment(name="root--geo", replicas=6)
-    k8sm.scale_deployment(name="root--jaeger", replicas=6)
-    k8sm.scale_deployment(name="root--memcached-profile", replicas=6)
-    k8sm.scale_deployment(name="root--memcached-rate", replicas=6)
-    k8sm.scale_deployment(name="root--memcached-reserve", replicas=6)
-    k8sm.scale_deployment(name="root--profile", replicas=6)
-    k8sm.scale_deployment(name="root--rate", replicas=6)
-    k8sm.scale_deployment(name="root--recommendation", replicas=6)
-    k8sm.scale_deployment(name="root--reservation", replicas=6)
-    k8sm.scale_deployment(name="root--search", replicas=6)
-    k8sm.scale_deployment(name="root--user", replicas=6)
-    
-    k8sm.scale_deployment(name="root--mongodb-geo", replicas=3)
-    k8sm.scale_deployment(name="root--mongodb-profile", replicas=3)
-    k8sm.scale_deployment(name="root--mongodb-rate", replicas=3)
-    k8sm.scale_deployment(name="root--mongodb-recommendation", replicas=3)
-    k8sm.scale_deployment(name="root--mongodb-reservation", replicas=3)
-    k8sm.scale_deployment(name="root--mongodb-user", replicas=3)
-
-    #logger.info(f"Allocated total {sumd}")
+    sumd = 0    
+    for s in HOTELRES_MICROSERVICES:    
+        key = "root--"+s
+        if 'mongodb' in key:
+            logger.info(f"{key} 2")
+            k8sm.scale_deployment(name=key, replicas=2)
+            sumd = sumd + 2
+        elif 'consul' in key:
+            logger.info(f"{key} 8")
+            sumd = sumd + 8
+            k8sm.scale_deployment(name=key, replicas=8)
+        else:
+            logger.info(f"{key} 9")
+            sumd = sumd + 9
+            k8sm.scale_deployment(name=key, replicas=9)
+    logger.info(f"Allocated total {sumd}")
