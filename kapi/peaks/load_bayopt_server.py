@@ -23,7 +23,7 @@ if __name__ == "__main__":
     #k8sm.list_pods()
     res = k8sm.get_cluster_resources()
     logger.info(f"k8sm.get_cluster_resources() {res}")
-    logger.info(f"k8sm.all_pods_running(): {k8sm.all_pods_running()}")
+    #logger.info(f"k8sm.all_pods_running(): {k8sm.all_pods_running()}")
 
     ax_client = AxClient.load_from_json_file()
     best_parameters, values = ax_client.get_best_parameters()

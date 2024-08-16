@@ -102,6 +102,7 @@ def evalpeaks(pname, data_source, uniqNodes, params):
         if reward > 0.0:            
             preward = getTotalPwr(uniqNodes)
         else:
+            reward = 999999.0
             logger.info(f"reward is {reward}???")
     else:
         logger.info(f"No new P99 data???")
