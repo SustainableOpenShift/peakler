@@ -1,0 +1,30 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dsb
+  labels:
+    app: dsb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dsb
+  template:
+    metadata:
+      labels:
+        app: dsb
+      name: dsb
+    spec:
+      volumes:
+        - name: log-share
+          emptyDir: {}
+      containers:
+      - name: dsb
+        image: quay.io/centos/centos:stream9
+        imagePullPolicy: Always
+        volumeMounts:
+          - mountPath: /sharelogs/
+            name: log-share
+        command: ["/bin/bash", "-c"]
+        args: ["echo SLEEPING; sleep 30d;"]

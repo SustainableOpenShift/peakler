@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+  labels:
+    app: hr-client
+    death-star-project: hotel-res
+  name: hr-client
+  namespace: default
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: hr-client
+      death-star-project: hotel-res
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: hr-client
+        death-star-project: hotel-res
+      name: hr-client
+    spec:
+      containers:
+      - command:
+        - /bin/bash
+        - -c
+        - |
+          sleep 30d;
+        image: quay.io/centos/centos:stream8
+        imagePullPolicy: Always
+        name: hr-client
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /cilantrologs/
+          name: log-share
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: log-share

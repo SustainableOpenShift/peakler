@@ -1,0 +1,27 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: crayc
+  labels:
+    app: crayc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: crayc
+  template:
+    metadata:
+      labels:
+        app: crayc
+      name: crayc
+    spec:
+      containers:
+      - name: crayc
+        image: public.ecr.aws/cilantro/cray-workloads:latest
+        imagePullPolicy: Always
+        command:
+          - '/bin/bash'
+          - '-c'
+          - >
+            sleep 30d;

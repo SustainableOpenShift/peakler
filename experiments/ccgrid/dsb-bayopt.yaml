@@ -1,0 +1,31 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dsb-bayopt
+  labels:
+    app: dsb-bayopt
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dsb-bayopt
+  template:
+    metadata:
+      labels:
+        app: dsb-bayopt
+      name: dsb-bayopt
+    spec:
+      nodeName: node0.hand32-224200.bayopsys-pg0.wisc.cloudlab.us
+      volumes:
+        - name: log-share
+          emptyDir: {}
+      containers:
+      - name: dsb-bayopt
+        image: quay.io/centos/centos:stream9
+        imagePullPolicy: Always
+        volumeMounts:
+          - mountPath: /sharelogs/
+            name: log-share
+        command: ["/bin/bash", "-c"]
+        args: ["dnf -y update; dnf -y install epel-release; dnf -y update; dnf -y install xz wget yum-utils make gcc openssl-devel bzip2-devel libffi-devel zlib-devel git emacs; cd /; wget https://www.python.org/ftp/python/3.13.0/Python-3.13.0.tar.xz; tar -xf Python-3.13.0.tar.xz; cd Python-3.13.0; ./configure --enable-optimizations --with-ensurepip=install && make -j && make install; cd /; pip3 install ax-platform==0.4.3 kubernetes; git clone https://github.com/handong32/peakler.git; echo SLEEPING; sleep 30d;"]

@@ -1,0 +1,45 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: root--db0j1-head
+  labels:
+    app: root--db0j1-head
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: root--db0j1-head
+  template:
+    metadata:
+      labels:
+        app: root--db0j1-head
+      name: root--db0j1-head
+    spec:
+      containers:
+      - name: root--db0j1-head
+        image: public.ecr.aws/cilantro/cray-workloads:latest
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 10001
+            protocol: TCP
+          - containerPort: 8265
+            protocol: TCP
+          - containerPort: 6379
+            protocol: TCP
+        env:
+          - name: POD_IP
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: status.podIP
+          - name: MY_CPU_REQUEST
+            valueFrom:
+              resourceFieldRef:
+                divisor: "0"
+                resource: requests.cpu
+        command:
+          - '/bin/bash'
+          - '-c'
+          - >
+            sleep 30d;

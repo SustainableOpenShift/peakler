@@ -1,0 +1,42 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: root--db0j1-client
+  labels:
+    app: root--db0j1-client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: root--db0j1-client
+  template:
+    metadata:
+      labels:
+        app: root--db0j1-client
+      name: root--db0j1-client
+    spec:
+      volumes:
+        - name: log-share
+          emptyDir: {}
+      containers:
+      - name: root--db0j1-client
+        image: public.ecr.aws/cilantro/cray-workloads:latest
+        imagePullPolicy: Always
+        volumeMounts:
+          - mountPath: /cilantrologs
+            name: log-share
+        ports:
+          - containerPort: 80
+            protocol: TCP
+        env:
+          - name: POD_IP
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: status.podIP
+        command:
+          - '/bin/bash'
+          - '-c'
+          - >
+            sleep 30d;
